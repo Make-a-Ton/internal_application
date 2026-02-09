@@ -1,13 +1,13 @@
 "use client";
 
-import { Home, List, FolderOpen, Calendar, Users } from "lucide-react";
+import { Home, List, Flag, Calendar, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
     { icon: Home, href: "/dashboard", label: "Home" },
-    { icon: List, href: "/dashboard/tasks", label: "Tasks" },
-    { icon: FolderOpen, href: "/dashboard/submissions", label: "Submissions" },
+    { icon: List, href: "/dashboard/requests", label: "Requests" },
+    { icon: Flag, href: "/dashboard/checkpoints", label: "Checkpoints" },
     { icon: Calendar, href: "/dashboard/schedule", label: "Schedule" },
     { icon: Users, href: "/dashboard/team", label: "Team" },
 ];
@@ -24,8 +24,8 @@ export default function BottomNav() {
                         key={item.href}
                         href={item.href}
                         className={`p-3 rounded-full transition-all duration-200 ${isActive
-                                ? "bg-blue-500 text-white shadow-lg"
-                                : "text-gray-400 hover:text-white hover:bg-gray-700"
+                            ? "bg-blue-500 text-white shadow-lg"
+                            : "text-gray-400 hover:text-white hover:bg-gray-700"
                             }`}
                         title={item.label}
                     >

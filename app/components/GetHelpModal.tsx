@@ -7,6 +7,7 @@ import { X, ArrowRight } from "lucide-react";
 interface GetHelpModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onSubmit?: (data: { category: string; urgency: string; description: string }) => void;
 }
 
 const categories = ["Technical", "Infrastructure", "Mentorship", "Medical"];
@@ -15,14 +16,16 @@ const urgencyLevels = [
     { label: "Critical", color: "red" },
 ];
 
-export default function GetHelpModal({ isOpen, onClose }: GetHelpModalProps) {
+export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModalProps) {
     const [selectedCategory, setSelectedCategory] = useState("Technical");
     const [selectedUrgency, setSelectedUrgency] = useState("Normal");
     const [description, setDescription] = useState("");
 
     const handleSubmit = () => {
-        console.log({ selectedCategory, selectedUrgency, description });
-        // TODO: API call
+        if (onSubmit) {
+            onSubmit({ category: selectedCategory, urgency: selectedUrgency, description });
+        }
+        setDescription("");
         onClose();
     };
 
@@ -72,8 +75,8 @@ export default function GetHelpModal({ isOpen, onClose }: GetHelpModalProps) {
                                         key={category}
                                         onClick={() => setSelectedCategory(category)}
                                         className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-200 ${selectedCategory === category
-                                                ? "bg-burgundy text-gold-light shadow-lg"
-                                                : "bg-white border border-gray-200 text-gray-700 hover:border-burgundy/50"
+                                            ? "bg-burgundy text-gold-light shadow-lg"
+                                            : "bg-white border border-gray-200 text-gray-700 hover:border-burgundy/50"
                                             }`}
                                     >
                                         {category}
@@ -93,10 +96,10 @@ export default function GetHelpModal({ isOpen, onClose }: GetHelpModalProps) {
                                         key={level.label}
                                         onClick={() => setSelectedUrgency(level.label)}
                                         className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selectedUrgency === level.label
-                                                ? level.color === "green"
-                                                    ? "bg-green-50 border-2 border-green-500 text-green-700"
-                                                    : "bg-red-50 border-2 border-red-500 text-red-700"
-                                                : "bg-white border border-gray-200 text-gray-700 hover:border-gray-400"
+                                            ? level.color === "green"
+                                                ? "bg-green-50 border-2 border-green-500 text-green-700"
+                                                : "bg-red-50 border-2 border-red-500 text-red-700"
+                                            : "bg-white border border-gray-200 text-gray-700 hover:border-gray-400"
                                             }`}
                                     >
                                         <span

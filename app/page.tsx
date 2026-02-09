@@ -2,13 +2,14 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { User, ArrowUpRight, Settings } from "lucide-react";
+import { User, ArrowUpRight, Settings, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "./components/LoadingScreen";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPin, setShowPin] = useState(false);
   const [pin, setPin] = useState(["", "", "", ""]);
   const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -136,15 +137,24 @@ export default function LoginPage() {
               transition={{ delay: 0.6 }}
               className="space-y-3"
             >
-              <label className="text-xs font-bold uppercase tracking-wider text-gold-medium ml-2">
-                Password (PIN)
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-gold-medium ml-2">
+                  Password (PIN)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowPin(!showPin)}
+                  className="text-gold-medium hover:text-gold-light transition-colors p-1"
+                >
+                  {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               <div className="flex justify-between gap-3">
                 {[0, 1, 2, 3].map((i) => (
                   <input
                     key={i}
                     ref={(el) => { pinRefs.current[i] = el; }}
-                    type="password"
+                    type={showPin ? "text" : "password"}
                     maxLength={1}
                     value={pin[i]}
                     onChange={(e) => handlePinChange(i, e.target.value)}

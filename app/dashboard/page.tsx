@@ -6,6 +6,7 @@ import {
     Bell, Settings, Zap, UtensilsCrossed, Upload, Image,
     ChevronRight, Clock, CheckCircle2, AlertCircle
 } from "lucide-react";
+import Link from "next/link";
 import DashboardHeader from "../components/DashboardHeader";
 import BottomNav from "../components/BottomNav";
 import GetHelpModal from "../components/GetHelpModal";
@@ -241,13 +242,16 @@ export default function DashboardPage() {
                 transition={{ delay: 0.8 }}
                 className="mx-4 mt-6"
             >
-                <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex items-center justify-between">
+                <Link
+                    href="/dashboard/checkpoints"
+                    className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer"
+                >
                     <div>
                         <h3 className="font-bold text-gray-900">Checkpoints</h3>
                         <p className="text-xs text-gray-400">Track your progress milestones</p>
                     </div>
                     <Clock className="h-5 w-5 text-gray-400" />
-                </div>
+                </Link>
             </motion.section>
 
             {/* Recent Activity */}
