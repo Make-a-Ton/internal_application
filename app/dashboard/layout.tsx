@@ -26,4 +26,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
         </div>
     );
+import AuthGuard from "../components/AuthGuard";
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    return <AuthGuard>{children}</AuthGuard>;
 }

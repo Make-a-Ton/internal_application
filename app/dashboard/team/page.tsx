@@ -5,7 +5,9 @@ import { motion } from "framer-motion";
 import { ChevronLeft, Bell, User, Heart, ThumbsUp, Phone, QrCode, Clock, LogOut, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
+import BottomNav from "../../components/BottomNav";
+import { supabase } from "../../../lib/supabase";
+import { useAuth } from "../../context/AuthContext";
 
 interface TeamData {
     id: string;
@@ -25,6 +27,7 @@ interface MemberData {
 
 export default function TeamPage() {
     const router = useRouter();
+    const { team: authTeam, logout } = useAuth();
     const [team, setTeam] = useState<TeamData | null>(null);
     const [members, setMembers] = useState<MemberData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -32,14 +35,16 @@ export default function TeamPage() {
 
     useEffect(() => {
         async function fetchData() {
+            if (!authTeam) return;
+
             setLoading(true);
             setError(null);
 
-            // Fetch the first team
+            // Fetch the authenticated team's data
             const { data: teamData, error: teamError } = await supabase
                 .from("team")
                 .select("*")
-                .limit(1)
+                .eq("id", authTeam.id)
                 .single();
 
             if (teamError) {
@@ -55,7 +60,7 @@ export default function TeamPage() {
             const { data: memberData, error: memberError } = await supabase
                 .from("member")
                 .select("*")
-                .eq("team_id", teamData.id);
+                .eq("team_id", authTeam.id);
 
             if (memberError) {
                 setError("Failed to load member data.");
@@ -69,9 +74,10 @@ export default function TeamPage() {
         }
 
         fetchData();
-    }, []);
+    }, [authTeam]);
 
     const handleLogout = () => {
+        logout();
         router.push("/");
     };
 

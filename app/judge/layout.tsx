@@ -1,6 +1,7 @@
 "use client";
 
 import JudgeSidebar from "./components/JudgeSidebar";
+import JudgeGuard from "../components/JudgeGuard";
 
 export default function JudgeLayout({ children }: { children: React.ReactNode }) {
     return (
