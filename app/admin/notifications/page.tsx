@@ -31,8 +31,8 @@ export default function AdminNotificationsPage() {
         <div className="min-h-screen p-8">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#5C0124]">Notifications</h1>
-                <p className="text-gray-500 mt-1">Send announcements to all participants</p>
+                <h1 className="text-3xl font-bold text-[#D4AF37]">Notifications</h1>
+                <p className="text-[#C09B6E] mt-1">Send announcements to all participants</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -40,49 +40,49 @@ export default function AdminNotificationsPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+                    className="bg-[#7A2840]/50 rounded-2xl border border-[#7A2840] p-6"
                 >
-                    <h2 className="text-lg font-bold text-gray-900 mb-6">New Notification</h2>
+                    <h2 className="text-lg font-bold text-[#F4E4BC] mb-6">New Notification</h2>
 
                     <div className="space-y-5">
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Title *</label>
+                            <label className="block text-sm font-semibold text-[#D4AF37] mb-2">Title *</label>
                             <input
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 placeholder="e.g. Checkpoint 3 will begin at 6:00PM"
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#5C0124] focus:border-transparent"
+                                className="w-full px-4 py-3 bg-[#5C0124] border border-[#7A2840] rounded-xl text-sm text-[#F4E4BC] placeholder:text-[#C09B6E]/50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                            <label className="block text-sm font-semibold text-[#D4AF37] mb-2">Description</label>
                             <textarea
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Add more details..."
                                 rows={3}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#5C0124] focus:border-transparent resize-none"
+                                className="w-full px-4 py-3 bg-[#5C0124] border border-[#7A2840] rounded-xl text-sm text-[#F4E4BC] placeholder:text-[#C09B6E]/50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent resize-none"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">URL (optional)</label>
+                            <label className="block text-sm font-semibold text-[#D4AF37] mb-2">URL (optional)</label>
                             <input
                                 type="url"
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
                                 placeholder="https://..."
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#5C0124] focus:border-transparent"
+                                className="w-full px-4 py-3 bg-[#5C0124] border border-[#7A2840] rounded-xl text-sm text-[#F4E4BC] placeholder:text-[#C09B6E]/50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Priority</label>
+                            <label className="block text-sm font-semibold text-[#D4AF37] mb-2">Priority</label>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setPriority("normal")}
                                     className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors ${priority === "normal"
-                                            ? "bg-[#5C0124] text-[#F4E4BC]"
-                                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                        ? "bg-[#5C0124] text-[#F4E4BC] border border-[#D4AF37]"
+                                        : "bg-[#5C0124]/50 text-[#C09B6E] border border-[#7A2840] hover:bg-[#5C0124]/70"
                                         }`}
                                 >
                                     Normal
@@ -90,8 +90,8 @@ export default function AdminNotificationsPage() {
                                 <button
                                     onClick={() => setPriority("high")}
                                     className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors ${priority === "high"
-                                            ? "bg-[#D4AF37] text-white"
-                                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                        ? "bg-[#D4AF37] text-[#3A0015]"
+                                        : "bg-[#5C0124]/50 text-[#C09B6E] border border-[#7A2840] hover:bg-[#5C0124]/70"
                                         }`}
                                 >
                                     🔥 High
@@ -101,7 +101,7 @@ export default function AdminNotificationsPage() {
                         <button
                             onClick={handleSend}
                             disabled={!title.trim() || isSending}
-                            className="w-full bg-[#5C0124] hover:bg-[#7A2840] disabled:bg-gray-300 text-[#F4E4BC] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+                            className="w-full bg-[#D4AF37] hover:bg-[#C09B6E] disabled:bg-[#7A2840]/50 disabled:text-[#C09B6E] text-[#3A0015] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
                         >
                             <Send className="h-4 w-4" />
                             {isSending ? "Sending..." : "Send to All Participants"}
@@ -114,33 +114,33 @@ export default function AdminNotificationsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+                    className="bg-[#7A2840]/50 rounded-2xl border border-[#7A2840] overflow-hidden"
                 >
-                    <div className="p-6 border-b border-gray-100">
-                        <h2 className="text-lg font-bold text-gray-900">Sent History</h2>
-                        <p className="text-sm text-gray-500 mt-1">{notifications.length} notifications sent</p>
+                    <div className="p-6 border-b border-[#7A2840]">
+                        <h2 className="text-lg font-bold text-[#F4E4BC]">Sent History</h2>
+                        <p className="text-sm text-[#C09B6E] mt-1">{notifications.length} notifications sent</p>
                     </div>
 
                     {notifications.length === 0 ? (
                         <div className="p-10 text-center">
-                            <Bell className="h-12 w-12 text-gray-200 mx-auto mb-3" />
-                            <p className="text-sm text-gray-400">No notifications sent yet</p>
+                            <Bell className="h-12 w-12 text-[#7A2840] mx-auto mb-3" />
+                            <p className="text-sm text-[#C09B6E]">No notifications sent yet</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-gray-50 max-h-[500px] overflow-y-auto">
+                        <div className="divide-y divide-[#7A2840]/50 max-h-[500px] overflow-y-auto">
                             {notifications.map((notif) => (
                                 <div key={notif.id} className="p-5">
                                     <div className="flex items-start justify-between">
-                                        <h3 className="font-bold text-gray-900">{notif.title}</h3>
+                                        <h3 className="font-bold text-[#F4E4BC]">{notif.title}</h3>
                                         {notif.priority === "high" && (
-                                            <span className="px-2 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-bold rounded-full">
+                                            <span className="px-2 py-1 bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-bold rounded-full">
                                                 HIGH
                                             </span>
                                         )}
                                     </div>
-                                    {notif.description && <p className="text-sm text-gray-500 mt-1">{notif.description}</p>}
-                                    {notif.url && <p className="text-sm text-blue-500 mt-1 truncate">{notif.url}</p>}
-                                    <p className="text-xs text-gray-400 mt-2">{notif.timestamp}</p>
+                                    {notif.description && <p className="text-sm text-[#C09B6E] mt-1">{notif.description}</p>}
+                                    {notif.url && <p className="text-sm text-[#D4AF37] mt-1 truncate">{notif.url}</p>}
+                                    <p className="text-xs text-[#C09B6E]/50 mt-2">{notif.timestamp}</p>
                                 </div>
                             ))}
                         </div>
