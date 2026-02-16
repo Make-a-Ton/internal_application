@@ -10,7 +10,7 @@ export default function AdminJudgesPage() {
     const [selectedJudge, setSelectedJudge] = useState<string | null>(null);
 
     return (
-        <div className="min-h-screen p-8">
+        <div className="min-h-screen p-4 md:p-8">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-[#D4AF37]">Judges</h1>
                 <p className="text-[#C09B6E] mt-1">Manage judges and assign teams for judging</p>

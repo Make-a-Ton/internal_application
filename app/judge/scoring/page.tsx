@@ -3,69 +3,200 @@
 import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useAppState, SCORING_CRITERIA, ScoreKey } from "../../context/AppContext";
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { supabase } from "../../lib/supabase";
+import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+
+// Scoring criteria definition (self-contained, no dependency on AppContext)
+const SCORING_CRITERIA = [
+    { key: "innovation", dbKey: "innovation", label: "Innovation & Creativity", description: "Originality of the idea" },
+    { key: "technical_complexity", dbKey: "technical_complexity", label: "Technical Complexity", description: "Depth of technical implementation" },
+    { key: "feasibility", dbKey: "feasibility", label: "Feasibility & Practicality", description: "Can it be realistically built & used?" },
+    { key: "market_viability", dbKey: "market_viability", label: "Market Viability", description: "Potential market demand & impact" },
+    { key: "pitching", dbKey: "pitching", label: "Pitching & Presentation", description: "Quality of demo & communication" },
+    { key: "completion", dbKey: "completion", label: "Project Completion", description: "How complete is the project?" },
+] as const;
+
+type ScoreKey = typeof SCORING_CRITERIA[number]["key"];
+
+interface AssignedTeam {
+    id: string;
+    name: string;
+    college: string;
+    track: string;
+    problem_stat: string | null;
+}
 
 function ScoringContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { judges, scores, submitScore, teams } = useAppState();
-    const [judgeId, setJudgeId] = useState("");
+    const { judge } = useAuth();
+
+    const [assignedTeams, setAssignedTeams] = useState<AssignedTeam[]>([]);
+    const [scoredTeamIds, setScoredTeamIds] = useState<string[]>([]);
     const [selectedTeamId, setSelectedTeamId] = useState("");
     const [currentScores, setCurrentScores] = useState<Record<ScoreKey, number>>({
-        innovation: 5, technicalComplexity: 5, feasibility: 5,
-        marketViability: 5, pitching: 5, completion: 5,
+        innovation: 5, technical_complexity: 5, feasibility: 5,
+        market_viability: 5, pitching: 5, completion: 5,
     });
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
     const [showDone, setShowDone] = useState(false);
     const [nextTeamName, setNextTeamName] = useState("");
 
+    // Fetch assigned teams and existing scores
     useEffect(() => {
-        const id = localStorage.getItem("makeaton_judge_id") || "";
-        setJudgeId(id);
-        const teamParam = searchParams.get("team");
-        if (teamParam) setSelectedTeamId(teamParam);
-    }, [searchParams]);
+        async function fetchData() {
+            if (!judge) return;
+            setLoading(true);
 
-    const judge = judges.find(j => j.id === judgeId);
-    const assignedTeams = teams.filter(t => judge?.assignedTeamIds.includes(t.id));
-    const selectedTeam = teams.find(t => t.id === selectedTeamId);
+            // 1. Get assigned team IDs
+            const { data: assignments, error: assignErr } = await supabase
+                .from("judge_assignments")
+                .select("team_id")
+                .eq("judge_id", judge.id);
 
-    // Load existing scores if any
-    useEffect(() => {
-        if (judgeId && selectedTeamId) {
-            const existing = scores.find(s => s.judgeId === judgeId && s.teamId === selectedTeamId);
-            if (existing) {
-                setCurrentScores(existing.scores);
+            if (assignErr) {
+                console.error("Assignment fetch error:", assignErr);
+                setLoading(false);
+                return;
+            }
+
+            const teamIds = (assignments || []).map(a => a.team_id);
+
+            if (teamIds.length === 0) {
+                setAssignedTeams([]);
+                setLoading(false);
+                return;
+            }
+
+            // 2. Fetch team details
+            const { data: teamsData, error: teamsErr } = await supabase
+                .from("team")
+                .select("id, name, college, track, problem_stat")
+                .in("id", teamIds);
+
+            if (teamsErr) {
+                console.error("Teams fetch error:", teamsErr);
             } else {
+                setAssignedTeams(teamsData || []);
+            }
+
+            // 3. Fetch existing scores by this judge
+            const { data: scoresData, error: scoresErr } = await supabase
+                .from("team_scores")
+                .select("*")
+                .eq("judge_id", judge.id);
+
+            if (scoresErr) {
+                console.error("Scores fetch error:", scoresErr);
+            } else if (scoresData) {
+                setScoredTeamIds(scoresData.map(s => s.team_id));
+            }
+
+            setLoading(false);
+
+            // Auto-select from URL param
+            const teamParam = searchParams.get("team");
+            if (teamParam && teamIds.includes(teamParam)) {
+                setSelectedTeamId(teamParam);
+                // Load existing score for this team
+                const existing = scoresData?.find(s => s.team_id === teamParam);
+                if (existing) {
+                    setCurrentScores({
+                        innovation: existing.innovation ?? 5,
+                        technical_complexity: existing.technical_complexity ?? 5,
+                        feasibility: existing.feasibility ?? 5,
+                        market_viability: existing.market_viability ?? 5,
+                        pitching: existing.pitching ?? 5,
+                        completion: existing.completion ?? 5,
+                    });
+                }
+            }
+        }
+
+        fetchData();
+    }, [judge, searchParams]);
+
+    // Load existing scores when team selection changes
+    useEffect(() => {
+        async function loadExistingScore() {
+            if (!judge || !selectedTeamId) return;
+
+            const { data, error } = await supabase
+                .from("team_scores")
+                .select("*")
+                .eq("judge_id", judge.id)
+                .eq("team_id", selectedTeamId)
+                .maybeSingle();
+
+            if (error) {
+                console.error("Score fetch error:", error);
+                return;
+            }
+
+            if (data) {
                 setCurrentScores({
-                    innovation: 5, technicalComplexity: 5, feasibility: 5,
-                    marketViability: 5, pitching: 5, completion: 5,
+                    innovation: data.innovation ?? 5,
+                    technical_complexity: data.technical_complexity ?? 5,
+                    feasibility: data.feasibility ?? 5,
+                    market_viability: data.market_viability ?? 5,
+                    pitching: data.pitching ?? 5,
+                    completion: data.completion ?? 5,
+                });
+            } else {
+                // Reset to defaults for unscored team
+                setCurrentScores({
+                    innovation: 5, technical_complexity: 5, feasibility: 5,
+                    market_viability: 5, pitching: 5, completion: 5,
                 });
             }
         }
-    }, [judgeId, selectedTeamId, scores]);
 
+        loadExistingScore();
+    }, [judge, selectedTeamId]);
+
+    const selectedTeam = assignedTeams.find(t => t.id === selectedTeamId);
     const total = Object.values(currentScores).reduce((a, b) => a + b, 0);
     const maxTotal = SCORING_CRITERIA.length * 10;
 
-    const handleSubmit = () => {
-        if (!judgeId || !selectedTeamId) return;
-        submitScore({
-            judgeId,
-            teamId: selectedTeamId,
-            scores: currentScores,
+    const handleSubmit = async () => {
+        if (!judge || !selectedTeamId || submitting) return;
+        setSubmitting(true);
+
+        const dbScore = {
+            judge_id: judge.id,
+            team_id: selectedTeamId,
+            innovation: currentScores.innovation,
+            technical_complexity: currentScores.technical_complexity,
+            feasibility: currentScores.feasibility,
+            market_viability: currentScores.market_viability,
+            pitching: currentScores.pitching,
+            completion: currentScores.completion,
             total,
-        });
+        };
+
+        const { error } = await supabase
+            .from("team_scores")
+            .upsert(dbScore, { onConflict: "judge_id,team_id" });
+
+        if (error) {
+            console.error("Score submit error:", error);
+            setSubmitting(false);
+            return;
+        }
+
+        // Update scored teams list
+        setScoredTeamIds(prev => [...new Set([...prev, selectedTeamId])]);
 
         // Find next unscored team
         const currentIndex = assignedTeams.findIndex(t => t.id === selectedTeamId);
-        const scoredTeamIds = scores.filter(s => s.judgeId === judgeId).map(s => s.teamId);
-        scoredTeamIds.push(selectedTeamId);
+        const updatedScoredIds = [...new Set([...scoredTeamIds, selectedTeamId])];
 
-        let nextTeam = null;
+        let nextTeam: AssignedTeam | null = null;
         for (let i = 1; i <= assignedTeams.length; i++) {
             const idx = (currentIndex + i) % assignedTeams.length;
-            if (!scoredTeamIds.includes(assignedTeams[idx].id)) {
+            if (!updatedScoredIds.includes(assignedTeams[idx].id)) {
                 nextTeam = assignedTeams[idx];
                 break;
             }
@@ -73,6 +204,7 @@ function ScoringContent() {
 
         setNextTeamName(nextTeam?.name || "");
         setShowDone(true);
+        setSubmitting(false);
 
         setTimeout(() => {
             setShowDone(false);
@@ -83,8 +215,16 @@ function ScoringContent() {
         }, 2500);
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="h-8 w-8 text-[#E7BB88] animate-spin" />
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen p-8 relative">
+        <div className="min-h-screen p-4 md:p-8 relative">
             {/* Done Overlay */}
             <AnimatePresence>
                 {showDone && (
@@ -135,15 +275,20 @@ function ScoringContent() {
                 <label className="block text-sm font-bold text-[#D4AF37] mb-2">Select Team</label>
                 <select
                     value={selectedTeamId}
-                    onChange={(e) => setSelectedTeamId(e.target.value)}
+                    onChange={(e) => {
+                        setSelectedTeamId(e.target.value);
+                        if (e.target.value) {
+                            router.replace(`/judge/scoring?team=${e.target.value}`);
+                        }
+                    }}
                     className="w-full max-w-md px-4 py-3 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D4AF37] text-[#F4E4BC]"
                 >
                     <option value="">Choose a team...</option>
                     {assignedTeams.map(t => {
-                        const isScored = scores.some(s => s.judgeId === judgeId && s.teamId === t.id);
+                        const isScored = scoredTeamIds.includes(t.id);
                         return (
                             <option key={t.id} value={t.id}>
-                                {t.name} ({t.code}) — {t.college} {isScored ? "✓" : ""}
+                                {t.name} — {t.college} {isScored ? "✓" : ""}
                             </option>
                         );
                     })}
@@ -151,11 +296,11 @@ function ScoringContent() {
             </div>
 
             {selectedTeam && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
                     {/* Scoring Sliders */}
                     <div className="lg:col-span-2 space-y-5">
                         {SCORING_CRITERIA.map((criteria, i) => {
-                            const key = criteria.key as ScoreKey;
+                            const key = criteria.key;
                             const value = currentScores[key];
                             return (
                                 <motion.div
@@ -202,14 +347,14 @@ function ScoringContent() {
                             className="bg-[#7A2840]/50 rounded-2xl p-6 border border-[#7A2840] sticky top-8"
                         >
                             <h3 className="font-bold text-[#F4E4BC] mb-4">{selectedTeam.name}</h3>
-                            <p className="text-xs text-[#C09B6E] mb-4">{selectedTeam.code} · {selectedTeam.college} · {selectedTeam.category}</p>
+                            <p className="text-xs text-[#C09B6E] mb-4">{selectedTeam.college} · {selectedTeam.track}</p>
 
                             {/* Score Breakdown */}
                             <div className="space-y-2 mb-6">
                                 {SCORING_CRITERIA.map(c => (
                                     <div key={c.key} className="flex justify-between text-sm">
                                         <span className="text-[#C09B6E]">{c.label}</span>
-                                        <span className="font-bold text-[#F4E4BC]">{currentScores[c.key as ScoreKey]}</span>
+                                        <span className="font-bold text-[#F4E4BC]">{currentScores[c.key]}</span>
                                     </div>
                                 ))}
                             </div>
@@ -231,10 +376,17 @@ function ScoringContent() {
 
                             <button
                                 onClick={handleSubmit}
-                                disabled={showDone}
-                                className="w-full font-bold py-4 rounded-xl transition-colors text-sm bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015] disabled:opacity-50"
+                                disabled={showDone || submitting}
+                                className="w-full font-bold py-4 rounded-xl transition-colors text-sm bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015] disabled:opacity-50 flex items-center justify-center gap-2"
                             >
-                                Submit Score
+                                {submitting ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        Submitting...
+                                    </>
+                                ) : (
+                                    "Submit Score"
+                                )}
                             </button>
                         </motion.div>
                     </div>
@@ -246,7 +398,7 @@ function ScoringContent() {
 
 export default function ScoringPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen p-8"><p className="text-[#C09B6E]">Loading...</p></div>}>
+        <Suspense fallback={<div className="min-h-screen p-4 md:p-8"><p className="text-[#C09B6E]">Loading...</p></div>}>
             <ScoringContent />
         </Suspense>
     );

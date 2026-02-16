@@ -28,7 +28,7 @@ export default function AdminNotificationsPage() {
     };
 
     return (
-        <div className="min-h-screen p-8">
+        <div className="min-h-screen p-4 md:p-8">
             {/* Header */}
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-[#D4AF37]">Notifications</h1>

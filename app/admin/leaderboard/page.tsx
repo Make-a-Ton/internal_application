@@ -9,7 +9,7 @@ export default function AdminLeaderboardPage() {
     const leaderboard = computeLeaderboard(scores, teams);
 
     return (
-        <div className="min-h-screen p-8">
+        <div className="min-h-screen p-4 md:p-8">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-[#D4AF37]">Leaderboard</h1>
                 <p className="text-[#C09B6E] mt-1">Overall team rankings from all judges</p>

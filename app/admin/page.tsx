@@ -19,7 +19,7 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="min-h-screen p-8 relative overflow-hidden">
+        <div className="min-h-screen p-4 md:p-8 relative overflow-hidden">
             {/* Rotating gear */}
             <motion.div
                 animate={{ rotate: 360 }}
