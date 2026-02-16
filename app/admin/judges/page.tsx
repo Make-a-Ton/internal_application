@@ -46,7 +46,7 @@ export default function AdminJudgesPage() {
                                     <span className="px-2 py-1 bg-[#5C0124] text-[#D4AF37] rounded-full font-bold">
                                         {assignedTeams.length} teams
                                     </span>
-                                    <span className="px-2 py-1 bg-green-900/30 text-green-400 rounded-full font-bold">
+                                    <span className="px-2 py-1 bg-[#E7BB88]/20 text-[#E7BB88] rounded-full font-bold">
                                         {judgeScoreCount} scored
                                     </span>
                                 </div>

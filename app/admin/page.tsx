@@ -14,7 +14,7 @@ export default function AdminDashboard() {
     const stats = [
         { label: "Total Teams", value: String(teams.length), icon: Users, color: "bg-[#7A2840] text-[#D4AF37]", href: "/admin/teams" },
         { label: "Active Requests", value: String(pendingRequests), icon: MessageSquare, color: "bg-[#7A2840] text-orange-400", href: "/admin/requests" },
-        { label: "Checkpoints Released", value: `${unlockedCount} / ${checkpoints.length}`, icon: Flag, color: "bg-[#7A2840] text-green-400", href: "/admin/checkpoints" },
+        { label: "Checkpoints Released", value: `${unlockedCount} / ${checkpoints.length}`, icon: Flag, color: "bg-[#7A2840] text-[#E7BB88]", href: "/admin/checkpoints" },
         { label: "Notifications Sent", value: String(notifications.length), icon: Bell, color: "bg-[#7A2840] text-[#D4AF37]", href: "/admin/notifications" },
     ];
 
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
                                 <div key={req.id} className="px-6 py-4 flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className={`w-2 h-2 rounded-full ${req.status === "pending" ? "bg-orange-500" :
-                                            req.status === "in-progress" ? "bg-blue-500" : "bg-green-500"
+                                            req.status === "in-progress" ? "bg-blue-500" : "bg-[#E7BB88]"
                                             }`} />
                                         <div>
                                             <p className="font-medium text-[#F4E4BC]">{req.message}</p>
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
                                         )}
                                         {req.status === "pending" && <AlertCircle className="h-4 w-4 text-orange-500" />}
                                         {req.status === "in-progress" && <Clock className="h-4 w-4 text-blue-500" />}
-                                        {req.status === "done" && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                                        {req.status === "done" && <CheckCircle2 className="h-4 w-4 text-[#E7BB88]" />}
                                     </div>
                                 </div>
                             ))

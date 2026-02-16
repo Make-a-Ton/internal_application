@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Maragsa';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.cdnfonts.com/s/129165/MaragsaDisplay-GO6PD.woff') format('woff');
+  font-display: swap;
+}
+
 @import "tailwindcss";
 
 :root {
@@ -17,6 +25,8 @@
   /* Metallic Gold */
   --color-gold-dark: #C09B6E;
   /* Extracted Bronze/Dark Gold */
+
+  --font-maragsa: 'Maragsa', Georgia, 'Times New Roman', serif;
 }
 
 @theme inline {
@@ -34,7 +44,42 @@
 body {
   background-color: var(--color-burgundy);
   color: var(--color-gold-light);
-  font-family: var(--font-coolvetica), Arial, Helvetica, sans-serif;
+  font-family: var(--font-maragsa);
+  letter-spacing: 0.08em;
+  line-height: 2;
+  word-spacing: 0.08em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+}
+
+p,
+span,
+li,
+a,
+label {
+  letter-spacing: 0.08em;
+}
+
+/* Ensure all elements inherit the Maragsa font */
+*,
+*::before,
+*::after {
+  font-family: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-maragsa);
 }
 
 .bg-grid-pattern {

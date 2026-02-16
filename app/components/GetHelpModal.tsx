@@ -97,13 +97,13 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
                                         onClick={() => setSelectedUrgency(level.label)}
                                         className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selectedUrgency === level.label
                                             ? level.color === "green"
-                                                ? "bg-green-900/50 border-2 border-green-500 text-green-400"
+                                                ? "bg-[#E7BB88]/20 border-2 border-[#E7BB88] text-[#E7BB88]"
                                                 : "bg-red-900/50 border-2 border-red-500 text-red-400"
                                             : "bg-[#7A2840]/50 border border-[#7A2840] text-[#C09B6E] hover:border-[#D4AF37]/50"
                                             }`}
                                     >
                                         <span
-                                            className={`h-2 w-2 rounded-full ${level.color === "green" ? "bg-green-500" : "bg-red-500"
+                                            className={`h-2 w-2 rounded-full ${level.color === "green" ? "bg-[#E7BB88]" : "bg-red-500"
                                                 }`}
                                         />
                                         {level.label}

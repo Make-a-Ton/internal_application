@@ -159,7 +159,7 @@ export default function NotificationsModal({ isOpen, onClose, notifications }: N
                         {/* Permission Granted State */}
                         {notificationPermission === "granted" && (
                             <div className="p-4 bg-green-900/50 flex items-center justify-center flex-shrink-0">
-                                <span className="text-sm font-medium text-green-400">✓ Notifications Enabled</span>
+                                <span className="text-sm font-medium text-[#E7BB88]">✓ Notifications Enabled</span>
                             </div>
                         )}
                     </motion.div>
