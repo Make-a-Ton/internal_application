@@ -16,9 +16,27 @@ export default function LoginPage() {
   // Handle form submission (no auth for testing)
   const handleLogin = () => {
     setIsLoading(true);
-    // Simulate loading delay for the animation
+    const enteredPin = pin.join("");
+
+    // Judge PINs
+    const judgePins: { [key: string]: string } = {
+      "1001": "judge-1",
+      "1002": "judge-2",
+      "1003": "judge-3",
+    };
+
+    let destination = "/dashboard";
+    if (enteredPin === "0000") {
+      destination = "/admin";
+    } else if (judgePins[enteredPin]) {
+      destination = "/judge";
+      if (typeof window !== "undefined") {
+        localStorage.setItem("makeaton_judge_id", judgePins[enteredPin]);
+      }
+    }
+
     setTimeout(() => {
-      router.push("/dashboard");
+      router.push(destination);
     }, 2500);
   };
 
