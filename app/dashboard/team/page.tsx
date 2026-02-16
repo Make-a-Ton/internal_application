@@ -1,36 +1,118 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, Bell, User, Heart, ThumbsUp, Phone, QrCode, Clock, LogOut, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, Bell, User, Heart, ThumbsUp, Phone, QrCode, Clock, LogOut, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BottomNav from "../../components/BottomNav";
+import { supabase } from "../../../lib/supabase";
 
-interface TeamMember {
+interface TeamData {
     id: string;
     name: string;
-    role: string;
-    isCheckedIn: boolean;
-    avatarInitials?: string;
+    track: string;
+    college: string;
+    problem_stat: string | null;
 }
 
-const teamMembers: TeamMember[] = [
-    { id: "1", name: "Keerthana D S", role: "HACKER", isCheckedIn: true },
-    { id: "2", name: "Afnash Ali P", role: "HACKER", isCheckedIn: true },
-    { id: "3", name: "Sajed Hussain", role: "HACKER", isCheckedIn: true },
-    { id: "4", name: "Ruvais P", role: "HACKER", isCheckedIn: true },
-];
+interface MemberData {
+    id: string;
+    team_id: string;
+    name: string;
+    food: string;
+    checkin: boolean;
+}
 
 export default function TeamPage() {
     const router = useRouter();
-    const [teamName] = useState("Team Rygtus");
-    const [teamCategory] = useState("GENERAL");
-    const [projectStatus] = useState<"submitted" | "pending" | "in-progress">("submitted");
+    const [team, setTeam] = useState<TeamData | null>(null);
+    const [members, setMembers] = useState<MemberData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true);
+            setError(null);
+
+            // Fetch the first team
+            const { data: teamData, error: teamError } = await supabase
+                .from("team")
+                .select("*")
+                .limit(1)
+                .single();
+
+            if (teamError) {
+                setError("Failed to load team data.");
+                setLoading(false);
+                console.error("Team fetch error:", teamError);
+                return;
+            }
+
+            setTeam(teamData);
+
+            // Fetch members for this team
+            const { data: memberData, error: memberError } = await supabase
+                .from("member")
+                .select("*")
+                .eq("team_id", teamData.id);
+
+            if (memberError) {
+                setError("Failed to load member data.");
+                setLoading(false);
+                console.error("Member fetch error:", memberError);
+                return;
+            }
+
+            setMembers(memberData || []);
+            setLoading(false);
+        }
+
+        fetchData();
+    }, []);
 
     const handleLogout = () => {
         router.push("/");
     };
+
+    // Derive project status from problem_stat
+    const projectStatus: "submitted" | "pending" | "in-progress" =
+        team?.problem_stat ? "submitted" : "pending";
+
+    // Generate initials from team name
+    const teamInitials = team?.name
+        ? team.name
+            .split(" ")
+            .map((w) => w[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2)
+        : "..";
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 text-gray-400 animate-spin" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+                <div className="text-center">
+                    <p className="text-red-500 font-semibold mb-2">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="text-sm text-gray-500 underline"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#5C0124] pb-24">
@@ -69,7 +151,7 @@ export default function TeamPage() {
                 </div>
 
                 {/* Team Name */}
-                <h2 className="text-2xl font-extrabold mb-3">{teamName}</h2>
+                <h2 className="text-2xl font-extrabold mb-3">{team?.name ?? "Unknown Team"}</h2>
 
                 {/* Category Badge */}
                 <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#5C0124] text-[#C09B6E] text-xs font-bold rounded-full uppercase tracking-wider border border-[#7A2840]">
@@ -113,7 +195,7 @@ export default function TeamPage() {
                 </div>
 
                 <div className="space-y-3">
-                    {teamMembers.map((member, index) => (
+                    {members.map((member, index) => (
                         <motion.div
                             key={member.id}
                             initial={{ opacity: 0, x: -20 }}
