@@ -128,7 +128,7 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                                         onClick={() => toggleTaskComplete(task.id)}
                                         disabled={checkpoint.isLocked}
                                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${task.completed
-                                            ? "bg-green-500 border-green-500"
+                                            ? "bg-[#E7BB88] border-[#E7BB88]"
                                             : "border-[#C09B6E] hover:border-[#D4AF37]"
                                             } ${checkpoint.isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
                                     >

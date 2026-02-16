@@ -67,7 +67,7 @@ export default function AdminCheckpointsPage() {
                                     onClick={() => toggleCheckpointLock(checkpoint.id)}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${checkpoint.isLocked
                                         ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                                        : "bg-green-900/30 text-green-400 hover:bg-green-900/50"
+                                        : "bg-[#E7BB88]/20 text-[#E7BB88] hover:bg-[#E7BB88]/30"
                                         }`}
                                 >
                                     {checkpoint.isLocked ? (
@@ -97,7 +97,7 @@ export default function AdminCheckpointsPage() {
                                                         {tasks.map((task) => (
                                                             <div key={task.id} className="flex items-center gap-2">
                                                                 {task.completed ? (
-                                                                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                                                                    <CheckCircle2 className="h-4 w-4 text-[#E7BB88]" />
                                                                 ) : (
                                                                     <Circle className="h-4 w-4 text-[#C09B6E]/50" />
                                                                 )}

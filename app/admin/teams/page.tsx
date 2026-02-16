@@ -86,7 +86,7 @@ export default function AdminTeamsPage() {
                                 <Users className="h-4 w-4" /> {team.members.length}
                             </span>
                             <span>
-                                <span className={`px-2 py-1 text-xs font-bold rounded-full ${team.projectStatus === "submitted" ? "bg-green-900/30 text-green-400" :
+                                <span className={`px-2 py-1 text-xs font-bold rounded-full ${team.projectStatus === "submitted" ? "bg-[#E7BB88]/20 text-[#E7BB88]" :
                                     team.projectStatus === "in-progress" ? "bg-blue-900/30 text-blue-400" :
                                         "bg-yellow-900/30 text-yellow-400"
                                     }`}>
@@ -115,7 +115,7 @@ export default function AdminTeamsPage() {
                                                     <p className="text-xs text-[#C09B6E]">{member.role}{member.food_pref ? ` · ${member.food_pref}` : ""}</p>
                                                 </div>
                                             </div>
-                                            <span className={`flex items-center gap-1 text-xs font-semibold ${member.isCheckedIn ? "text-green-400" : "text-[#C09B6E]"
+                                            <span className={`flex items-center gap-1 text-xs font-semibold ${member.isCheckedIn ? "text-[#E7BB88]" : "text-[#C09B6E]"
                                                 }`}>
                                                 <CheckCircle2 className="h-3 w-3" />
                                                 {member.isCheckedIn ? "Checked In" : "Not Checked In"}

@@ -105,7 +105,7 @@ function ScoringContent() {
                                 animate={{ scale: 1 }}
                                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                             >
-                                <CheckCircle2 className="h-20 w-20 text-green-400 mx-auto mb-4" />
+                                <CheckCircle2 className="h-20 w-20 text-[#E7BB88] mx-auto mb-4" />
                             </motion.div>
                             <h2 className="text-2xl font-bold text-[#F4E4BC] mb-2">Score Submitted!</h2>
                             <p className="text-[#C09B6E] mb-1">
@@ -117,7 +117,7 @@ function ScoringContent() {
                                     <ArrowRight className="h-3.5 w-3.5" />
                                 </p>
                             ) : (
-                                <p className="text-sm text-green-400 font-bold mt-3">🎉 All teams scored!</p>
+                                <p className="text-sm text-[#E7BB88] font-bold mt-3">🎉 All teams scored!</p>
                             )}
                         </motion.div>
                     </motion.div>
@@ -170,7 +170,7 @@ function ScoringContent() {
                                             <h3 className="font-bold text-[#F4E4BC]">{criteria.label}</h3>
                                             <p className="text-xs text-[#C09B6E]">{criteria.description}</p>
                                         </div>
-                                        <span className={`text-2xl font-bold ${value >= 8 ? "text-green-400" : value >= 5 ? "text-[#D4AF37]" : "text-red-400"
+                                        <span className={`text-2xl font-bold ${value >= 8 ? "text-[#E7BB88]" : value >= 5 ? "text-[#D4AF37]" : "text-red-400"
                                             }`}>
                                             {value}
                                         </span>

@@ -4,21 +4,20 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
     Bell, Settings, Zap, Upload,
-    Clock, AlertCircle
+    Clock, AlertCircle, CheckCircle2, Loader2
 } from "lucide-react";
 import Link from "next/link";
 import DashboardHeader from "../components/DashboardHeader";
 import BottomNav from "../components/BottomNav";
 import GetHelpModal from "../components/GetHelpModal";
-
-// Sample Data
-const recentActivity = [
-    { type: "Infrastructure", message: "[CRITICAL] Our fan gone.", time: "08:34 PM" },
-    { type: "Infrastructure", message: "[CRITICAL] We need a fan... 😂😭😭", time: "03:48 PM" },
-];
+import { useAppState } from "../context/AppContext";
 
 export default function DashboardPage() {
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+    const { requests } = useAppState();
+
+    // Get the 2 most recent requests (already sorted DESC by created_at from AppContext)
+    const recentRequests = requests.slice(0, 2);
 
     return (
         <div className="min-h-screen bg-[#5C0124] font-sans pb-24 relative overflow-hidden">
@@ -47,7 +46,7 @@ export default function DashboardPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="relative bg-gradient-to-br from-[#7A2840] via-[#5C0124] to-black text-[#F4E4BC] p-6 md:p-8 mx-4 mt-4 rounded-2xl overflow-hidden shadow-xl border border-[#D4AF37]/20"
+                    className="relative bg-gradient-to-br from-[#7A2840] via-[#5C0124] to-black text-[#F4E4BC] p-6 md:p-8 mx-4 mt-4 rounded-2xl overflow-hidden shadow-xl border border-white/15"
                 >
                     {/* Background Gear */}
                     <motion.div
@@ -58,7 +57,7 @@ export default function DashboardPage() {
                         <Settings size={200} />
                     </motion.div>
 
-                    <span className="inline-block px-3 py-1 bg-lime-400 text-black text-xs font-bold rounded-full mb-4">
+                    <span className="inline-block px-3 py-1 bg-[#E7BB88] text-[#5C0023] text-xs font-bold rounded-full mb-4">
                         🎯 TEAM DASHBOARD
                     </span>
 
@@ -88,7 +87,7 @@ export default function DashboardPage() {
                         <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider">Announcements</h2>
                         <button className="text-sm text-[#D4AF37] font-semibold hover:underline">View All</button>
                     </div>
-                    <div className="bg-[#7A2840]/50 rounded-xl p-6 border border-[#7A2840] shadow-sm text-center text-[#C09B6E]">
+                    <div className="bg-[#7A2840]/50 rounded-xl p-6 border border-white/15 shadow-sm text-center text-[#C09B6E]">
                         <Bell className="mx-auto h-10 w-10 mb-2 opacity-30" />
                         <p className="text-sm">No new announcements</p>
                         <p className="text-xs opacity-50">Stay tuned for updates</p>
@@ -102,8 +101,8 @@ export default function DashboardPage() {
                     transition={{ delay: 0.3 }}
                     className="mx-4 mt-6"
                 >
-                    <div className="relative bg-gradient-to-r from-[#3A0015] to-[#2A000F] text-[#F4E4BC] p-6 rounded-2xl overflow-hidden border border-[#7A2840]">
-                        <span className="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-lime-400 text-black text-xs font-bold rounded-full">
+                    <div className="relative bg-gradient-to-r from-[#3A0015] to-[#2A000F] text-[#F4E4BC] p-6 rounded-2xl overflow-hidden border border-white/15">
+                        <span className="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#E7BB88] text-[#5C0023] text-xs font-bold rounded-full">
                             SELECTED PROBLEM
                         </span>
                         <h3 className="text-lg md:text-xl font-bold mt-6 text-center text-[#D4AF37]">CLOUD-NATIVE & DEVOPS INTELLIGENCE CHALLENGE</h3>
@@ -128,7 +127,7 @@ export default function DashboardPage() {
                     <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider mb-3">Services</h2>
                     <button
                         onClick={() => setIsHelpModalOpen(true)}
-                        className="w-full bg-[#7A2840]/50 p-5 rounded-xl border border-[#7A2840] shadow-sm hover:bg-[#7A2840]/70 hover:shadow-md transition-all text-left cursor-pointer flex items-center gap-4"
+                        className="w-full bg-[#7A2840]/50 p-5 rounded-xl border border-white/15 shadow-sm hover:bg-[#7A2840]/70 hover:shadow-md transition-all text-left cursor-pointer flex items-center gap-4"
                     >
                         <div className="bg-[#5C0124] p-3 rounded-lg">
                             <Zap className="h-6 w-6 text-[#D4AF37]" />
@@ -140,23 +139,24 @@ export default function DashboardPage() {
                     </button>
                 </motion.section>
 
-                {/* Submit Project */}
                 <motion.section
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
                     className="mx-4 mt-6"
                 >
-                    <div className="bg-lime-400 text-black p-5 rounded-2xl flex items-center justify-between shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1">
-                                <span className="h-2 w-2 bg-black rounded-full animate-pulse"></span> Action Required
-                            </p>
-                            <h3 className="text-xl font-extrabold mt-1">Submit Project</h3>
-                            <p className="text-xs opacity-70">Upload repo & details</p>
+                    <Link href="/dashboard/submit">
+                        <div className="bg-[#E7BB88] text-[#5C0023] p-5 rounded-2xl flex items-center justify-between shadow-lg hover:shadow-xl transition-shadow cursor-pointer border border-white/15">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1">
+                                    <span className="h-2 w-2 bg-[#5C0023] rounded-full animate-pulse"></span> Action Required
+                                </p>
+                                <h3 className="text-xl font-extrabold mt-1">Submit Project</h3>
+                                <p className="text-xs opacity-70">Upload repo & details</p>
+                            </div>
+                            <Upload className="h-6 w-6" />
                         </div>
-                        <Upload className="h-6 w-6" />
-                    </div>
+                    </Link>
                 </motion.section>
 
 
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                 >
                     <Link
                         href="/dashboard/checkpoints"
-                        className="bg-[#7A2840]/50 rounded-xl p-5 border border-[#7A2840] shadow-sm flex items-center justify-between hover:bg-[#7A2840]/70 hover:shadow-md transition-all cursor-pointer"
+                        className="bg-[#7A2840]/50 rounded-xl p-5 border border-white/15 shadow-sm flex items-center justify-between hover:bg-[#7A2840]/70 hover:shadow-md transition-all cursor-pointer"
                     >
                         <div>
                             <h3 className="font-bold text-[#F4E4BC]">Checkpoints</h3>
@@ -187,18 +187,40 @@ export default function DashboardPage() {
                     transition={{ delay: 0.7 }}
                     className="mx-4 mt-6 mb-10"
                 >
-                    <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider mb-3">Recent Activity</h2>
+                    <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider mb-3">Recent Requests</h2>
                     <div className="space-y-3">
-                        {recentActivity.map((activity, idx) => (
-                            <div key={idx} className="bg-[#7A2840]/50 rounded-xl p-4 border border-[#7A2840] shadow-sm flex items-start gap-3">
-                                <AlertCircle className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
-                                <div className="flex-1">
-                                    <p className="font-semibold text-green-400">{activity.type}</p>
-                                    <p className="text-sm text-[#F4E4BC]">{activity.message}</p>
+                        {recentRequests.length > 0 ? (
+                            recentRequests.map((req) => (
+                                <div key={req.id} className="bg-[#7A2840]/50 rounded-xl p-4 border border-white/15 shadow-sm flex items-start gap-3">
+                                    {req.status === "done" ? (
+                                        <CheckCircle2 className="h-5 w-5 text-[#E7BB88] mt-0.5 flex-shrink-0" />
+                                    ) : req.status === "in-progress" ? (
+                                        <Loader2 className="h-5 w-5 text-[#D4AF37] mt-0.5 flex-shrink-0 animate-spin" />
+                                    ) : (
+                                        <AlertCircle className="h-5 w-5 text-[#C09B6E] mt-0.5 flex-shrink-0" />
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-0.5">
+                                            <p className="font-semibold text-[#E7BB88]">{req.category}</p>
+                                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${req.status === "done"
+                                                    ? "bg-[#E7BB88]/20 text-[#E7BB88]"
+                                                    : req.status === "in-progress"
+                                                        ? "bg-[#D4AF37]/20 text-[#D4AF37]"
+                                                        : "bg-[#C09B6E]/20 text-[#C09B6E]"
+                                                }`}>
+                                                {req.status}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-[#F4E4BC] truncate">{req.message}</p>
+                                    </div>
+                                    <span className="text-xs text-[#C09B6E] whitespace-nowrap">{req.timestamp}</span>
                                 </div>
-                                <span className="text-xs text-[#C09B6E] whitespace-nowrap">{activity.time}</span>
+                            ))
+                        ) : (
+                            <div className="bg-[#7A2840]/50 rounded-xl p-4 border border-white/15 text-center">
+                                <p className="text-sm text-[#C09B6E]">No requests yet. Use Technical Support to get help!</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </motion.section>
 

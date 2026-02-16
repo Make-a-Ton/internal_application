@@ -97,20 +97,20 @@ export default function TeamPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 text-gray-400 animate-spin" />
+            <div className="min-h-screen bg-[#5C0124] flex items-center justify-center">
+                <Loader2 className="h-8 w-8 text-[#E7BB88] animate-spin" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+            <div className="min-h-screen bg-[#5C0124] flex items-center justify-center px-6">
                 <div className="text-center">
-                    <p className="text-red-500 font-semibold mb-2">{error}</p>
+                    <p className="text-red-400 font-semibold mb-2">{error}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="text-sm text-gray-500 underline"
+                        className="text-sm text-[#C09B6E] underline"
                     >
                         Retry
                     </button>
@@ -181,7 +181,7 @@ export default function TeamPage() {
                             {projectStatus}
                         </h3>
                         {projectStatus === "submitted" && (
-                            <CheckCircle2 className="h-6 w-6 text-green-400" />
+                            <CheckCircle2 className="h-6 w-6 text-[#E7BB88]" />
                         )}
                     </div>
                 </div>
