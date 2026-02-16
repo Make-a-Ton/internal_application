@@ -1,0 +1,2 @@
+﻿app/admin/leaderboard/page.tsx(9,25): error TS2554: Expected 2 arguments, but got 1.
+app/judge/leaderboard/page.tsx(9,25): error TS2554: Expected 2 arguments, but got 1.

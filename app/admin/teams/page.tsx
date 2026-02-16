@@ -3,61 +3,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, ChevronDown, ChevronUp, Users, CheckCircle2 } from "lucide-react";
-
-interface TeamMember {
-    name: string;
-    role: string;
-    isCheckedIn: boolean;
-}
-
-interface Team {
-    id: string;
-    name: string;
-    code: string;
-    category: string;
-    members: TeamMember[];
-    projectStatus: "submitted" | "pending" | "in-progress";
-}
-
-const teamsData: Team[] = [
-    {
-        id: "1", name: "Team Rygtus", code: "TR01", category: "GENERAL",
-        projectStatus: "submitted",
-        members: [
-            { name: "Keerthana D S", role: "Hacker", isCheckedIn: true },
-            { name: "Afnash Ali P", role: "Hacker", isCheckedIn: true },
-            { name: "Sajed Hussain", role: "Hacker", isCheckedIn: true },
-            { name: "Ruvais P", role: "Hacker", isCheckedIn: true },
-        ],
-    },
-    {
-        id: "2", name: "Team Alpha", code: "TA02", category: "GENERAL",
-        projectStatus: "in-progress",
-        members: [
-            { name: "Alex Johnson", role: "Hacker", isCheckedIn: true },
-            { name: "Sarah Chen", role: "Hacker", isCheckedIn: false },
-            { name: "Mike Davis", role: "Hacker", isCheckedIn: true },
-        ],
-    },
-    {
-        id: "3", name: "Team Beta", code: "TB03", category: "GENERAL",
-        projectStatus: "pending",
-        members: [
-            { name: "Emma Wilson", role: "Hacker", isCheckedIn: true },
-            { name: "James Lee", role: "Hacker", isCheckedIn: true },
-            { name: "Priya Patel", role: "Hacker", isCheckedIn: true },
-            { name: "Tom Brown", role: "Hacker", isCheckedIn: false },
-        ],
-    },
-];
+import { useAppState } from "../../context/AppContext";
 
 export default function AdminTeamsPage() {
+    const { teams } = useAppState();
     const [searchQuery, setSearchQuery] = useState("");
     const [expandedTeam, setExpandedTeam] = useState<string | null>(null);
 
-    const filteredTeams = teamsData.filter(team =>
+    const filteredTeams = teams.filter(team =>
         team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        team.code.toLowerCase().includes(searchQuery.toLowerCase())
+        team.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        team.college.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const toggleTeam = (teamId: string) => {
@@ -70,14 +26,14 @@ export default function AdminTeamsPage() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-extrabold text-gray-900">Teams</h1>
-                    <p className="text-gray-500 mt-1">{teamsData.length} registered teams</p>
+                    <p className="text-gray-500 mt-1">{teams.length} registered teams</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search teams..."
+                            placeholder="Search teams, colleges..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -89,9 +45,10 @@ export default function AdminTeamsPage() {
             {/* Teams List */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 {/* Table Header */}
-                <div className="grid grid-cols-5 gap-4 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <div className="grid grid-cols-6 gap-4 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
                     <span>Team Name</span>
                     <span>Code</span>
+                    <span>College</span>
                     <span>Category</span>
                     <span>Members</span>
                     <span>Status</span>
@@ -108,7 +65,7 @@ export default function AdminTeamsPage() {
                         {/* Team Row */}
                         <button
                             onClick={() => toggleTeam(team.id)}
-                            className="grid grid-cols-5 gap-4 px-6 py-4 w-full text-left hover:bg-gray-50 transition-colors border-b border-gray-50"
+                            className="grid grid-cols-6 gap-4 px-6 py-4 w-full text-left hover:bg-gray-50 transition-colors border-b border-gray-50"
                         >
                             <span className="font-semibold text-gray-900 flex items-center gap-2">
                                 {expandedTeam === team.id ? (
@@ -119,6 +76,7 @@ export default function AdminTeamsPage() {
                                 {team.name}
                             </span>
                             <span className="text-gray-600 font-mono text-sm">{team.code}</span>
+                            <span className="text-gray-600 text-sm truncate" title={team.college}>{team.college}</span>
                             <span>
                                 <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded-full">
                                     {team.category}
@@ -129,8 +87,8 @@ export default function AdminTeamsPage() {
                             </span>
                             <span>
                                 <span className={`px-2 py-1 text-xs font-bold rounded-full ${team.projectStatus === "submitted" ? "bg-green-50 text-green-600" :
-                                        team.projectStatus === "in-progress" ? "bg-blue-50 text-blue-600" :
-                                            "bg-yellow-50 text-yellow-600"
+                                    team.projectStatus === "in-progress" ? "bg-blue-50 text-blue-600" :
+                                        "bg-yellow-50 text-yellow-600"
                                     }`}>
                                     {team.projectStatus.toUpperCase()}
                                 </span>
@@ -154,7 +112,7 @@ export default function AdminTeamsPage() {
                                                 </div>
                                                 <div>
                                                     <p className="font-medium text-gray-900 text-sm">{member.name}</p>
-                                                    <p className="text-xs text-gray-400">{member.role}</p>
+                                                    <p className="text-xs text-gray-400">{member.role}{member.food_pref ? ` · ${member.food_pref}` : ""}</p>
                                                 </div>
                                             </div>
                                             <span className={`flex items-center gap-1 text-xs font-semibold ${member.isCheckedIn ? "text-green-600" : "text-gray-400"

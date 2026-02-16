@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { UserCheck, Plus, X, Users } from "lucide-react";
-import { useAppState, allTeams } from "../../context/AppContext";
+import { useAppState } from "../../context/AppContext";
 
 export default function AdminJudgesPage() {
-    const { judges, assignTeamToJudge, unassignTeamFromJudge, scores } = useAppState();
+    const { judges, assignTeamToJudge, unassignTeamFromJudge, scores, teams } = useAppState();
     const [selectedJudge, setSelectedJudge] = useState<string | null>(null);
 
     return (
@@ -18,8 +18,8 @@ export default function AdminJudgesPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {judges.map((judge, i) => {
-                    const assignedTeams = allTeams.filter(t => judge.assignedTeamIds.includes(t.id));
-                    const unassignedTeams = allTeams.filter(t => !judge.assignedTeamIds.includes(t.id));
+                    const assignedTeams = teams.filter(t => judge.assignedTeamIds.includes(t.id));
+                    const unassignedTeams = teams.filter(t => !judge.assignedTeamIds.includes(t.id));
                     const judgeScoreCount = scores.filter(s => s.judgeId === judge.id).length;
                     const isExpanded = selectedJudge === judge.id;
 
@@ -63,7 +63,10 @@ export default function AdminJudgesPage() {
                                             <div key={team.id} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
                                                 <div className="flex items-center gap-2">
                                                     <Users className="h-3.5 w-3.5 text-gray-400" />
-                                                    <span className="text-sm font-medium text-gray-700">{team.name}</span>
+                                                    <div>
+                                                        <span className="text-sm font-medium text-gray-700">{team.name}</span>
+                                                        <p className="text-xs text-gray-400">{team.college}</p>
+                                                    </div>
                                                 </div>
                                                 <button
                                                     onClick={() => unassignTeamFromJudge(judge.id, team.id)}
@@ -101,7 +104,7 @@ export default function AdminJudgesPage() {
                                                 }}
                                                 className="w-full flex items-center justify-between py-2 px-3 hover:bg-[#5C0124]/5 rounded-lg transition-colors text-left"
                                             >
-                                                <span className="text-sm text-gray-700">{team.name}</span>
+                                                <span className="text-sm text-gray-700">{team.name} <span className="text-xs text-gray-400">· {team.college}</span></span>
                                                 <UserCheck className="h-4 w-4 text-[#5C0124]" />
                                             </button>
                                         ))}

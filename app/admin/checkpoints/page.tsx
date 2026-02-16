@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 import { Lock, Unlock, ChevronDown, ChevronUp, CheckCircle2, Circle } from "lucide-react";
 import { useState } from "react";
-import { useAppState, allTeams } from "../../context/AppContext";
+import { useAppState } from "../../context/AppContext";
 
 export default function AdminCheckpointsPage() {
-    const { checkpoints, toggleCheckpointLock, checkpointTasks } = useAppState();
+    const { checkpoints, toggleCheckpointLock, checkpointTasks, teams } = useAppState();
     const [expandedCheckpoint, setExpandedCheckpoint] = useState<number | null>(null);
 
     return (
@@ -18,7 +18,7 @@ export default function AdminCheckpointsPage() {
 
             <div className="space-y-6">
                 {checkpoints.map((checkpoint, index) => {
-                    const teamsWithTasks = allTeams.map(team => ({
+                    const teamsWithTasks = teams.map(team => ({
                         team,
                         tasks: checkpointTasks[`${team.id}:${checkpoint.id}`] || [],
                     })).filter(t => t.tasks.length > 0);

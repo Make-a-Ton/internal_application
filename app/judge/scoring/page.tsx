@@ -3,13 +3,13 @@
 import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useAppState, allTeams, SCORING_CRITERIA, ScoreKey } from "../../context/AppContext";
+import { useAppState, SCORING_CRITERIA, ScoreKey } from "../../context/AppContext";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 
 function ScoringContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { judges, scores, submitScore } = useAppState();
+    const { judges, scores, submitScore, teams } = useAppState();
     const [judgeId, setJudgeId] = useState("");
     const [selectedTeamId, setSelectedTeamId] = useState("");
     const [currentScores, setCurrentScores] = useState<Record<ScoreKey, number>>({
@@ -27,8 +27,8 @@ function ScoringContent() {
     }, [searchParams]);
 
     const judge = judges.find(j => j.id === judgeId);
-    const assignedTeams = allTeams.filter(t => judge?.assignedTeamIds.includes(t.id));
-    const selectedTeam = allTeams.find(t => t.id === selectedTeamId);
+    const assignedTeams = teams.filter(t => judge?.assignedTeamIds.includes(t.id));
+    const selectedTeam = teams.find(t => t.id === selectedTeamId);
 
     // Load existing scores if any
     useEffect(() => {
@@ -145,7 +145,7 @@ function ScoringContent() {
                         const isScored = scores.some(s => s.judgeId === judgeId && s.teamId === t.id);
                         return (
                             <option key={t.id} value={t.id}>
-                                {t.name} ({t.code}) {isScored ? "✓" : ""}
+                                {t.name} ({t.code}) — {t.college} {isScored ? "✓" : ""}
                             </option>
                         );
                     })}
@@ -204,7 +204,7 @@ function ScoringContent() {
                             className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-8"
                         >
                             <h3 className="font-bold text-gray-900 mb-4">{selectedTeam.name}</h3>
-                            <p className="text-xs text-gray-400 mb-4">{selectedTeam.code} · {selectedTeam.category}</p>
+                            <p className="text-xs text-gray-400 mb-4">{selectedTeam.code} · {selectedTeam.college} · {selectedTeam.category}</p>
 
                             {/* Score Breakdown */}
                             <div className="space-y-2 mb-6">

@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { Playwrite_NZ, Roboto_Condensed } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
 
-const playwriteNZ = Playwrite_NZ({
-  variable: "--font-playwrite-nz",
-  weight: "400",
-});
-
-const robotoCondensed = Roboto_Condensed({
-  variable: "--font-roboto-condensed",
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
+const coolvetica = localFont({
+  src: "./fonts/CoolveticaRg.otf",
+  variable: "--font-coolvetica",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playwriteNZ.variable} ${robotoCondensed.variable} antialiased`}
+        className={`${coolvetica.variable} antialiased`}
       >
         <ClientLayout>{children}</ClientLayout>
       </body>

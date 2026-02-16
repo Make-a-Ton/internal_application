@@ -5,8 +5,8 @@ import { Trophy } from "lucide-react";
 import { useAppState, computeLeaderboard } from "../../context/AppContext";
 
 export default function JudgeLeaderboardPage() {
-    const { scores } = useAppState();
-    const leaderboard = computeLeaderboard(scores);
+    const { scores, teams } = useAppState();
+    const leaderboard = computeLeaderboard(scores, teams);
 
     return (
         <div className="min-h-screen p-8">

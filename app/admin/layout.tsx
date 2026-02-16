@@ -4,7 +4,7 @@ import AdminSidebar from "./components/AdminSidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900" style={{ fontFamily: "var(--font-roboto-condensed), sans-serif" }}>
+        <div className="min-h-screen bg-gray-50 text-gray-900" style={{ fontFamily: "var(--font-coolvetica), sans-serif" }}>
             <AdminSidebar />
             <main className="ml-64">
                 {children}

@@ -6,13 +6,13 @@ import Link from "next/link";
 import { useAppState } from "../context/AppContext";
 
 export default function AdminDashboard() {
-    const { checkpoints, requests, notifications } = useAppState();
+    const { checkpoints, requests, notifications, teams } = useAppState();
 
     const unlockedCount = checkpoints.filter(c => !c.isLocked).length;
     const pendingRequests = requests.filter(r => r.status === "pending").length;
 
     const stats = [
-        { label: "Total Teams", value: "24", icon: Users, color: "bg-[#5C0124]/10 text-[#5C0124]", href: "/admin/teams" },
+        { label: "Total Teams", value: String(teams.length), icon: Users, color: "bg-[#5C0124]/10 text-[#5C0124]", href: "/admin/teams" },
         { label: "Active Requests", value: String(pendingRequests), icon: MessageSquare, color: "bg-orange-50 text-orange-600", href: "/admin/requests" },
         { label: "Checkpoints Released", value: `${unlockedCount} / ${checkpoints.length}`, icon: Flag, color: "bg-green-50 text-green-600", href: "/admin/checkpoints" },
         { label: "Notifications Sent", value: String(notifications.length), icon: Bell, color: "bg-[#D4AF37]/10 text-[#D4AF37]", href: "/admin/notifications" },
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
                             <div key={req.id} className="px-6 py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-2 h-2 rounded-full ${req.status === "pending" ? "bg-orange-500" :
-                                            req.status === "in-progress" ? "bg-blue-500" : "bg-green-500"
+                                        req.status === "in-progress" ? "bg-blue-500" : "bg-green-500"
                                         }`} />
                                     <div>
                                         <p className="font-medium text-gray-900">{req.message}</p>

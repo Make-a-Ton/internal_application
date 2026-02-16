@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, Bell, Plus } from "lucide-react";
 import Link from "next/link";
@@ -10,10 +10,18 @@ import { useAppState } from "../../context/AppContext";
 
 export default function RequestsPage() {
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
-    const { requests, addRequest } = useAppState();
+    const { requests, addRequest, teams } = useAppState();
+    const [teamId, setTeamId] = useState("");
+
+    useEffect(() => {
+        const storedTeamId = localStorage.getItem("makeaton_team_id") || "";
+        // Fallback: use first team from DB for demo if no team ID stored
+        setTeamId(storedTeamId || (teams.length > 0 ? teams[0].id : ""));
+    }, [teams]);
 
     const handleNewRequest = (request: { category: string; urgency: string; description: string }) => {
         addRequest({
+            teamId,
             category: request.category,
             urgency: request.urgency === "critical" ? "critical" : "normal",
             message: request.description || `[${request.urgency.toUpperCase()}] ${request.category} request`,

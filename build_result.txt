@@ -1,0 +1,91 @@
+﻿node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be 
+correct.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Users\alisa\AppData\
+Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ΓÜá War   
+ ning: Ne...not b    
+e correct.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ We detected 
+multiple lockfiles 
+and selected the 
+directory of C:\Users
+\alisa\package-lock.j
+son as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs
+.org/docs/app/api-ref
+erence/config/next-co
+nfig-js/turbopack#roo
+t-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * C:\Users\alisa\O
+neDrive\Desktop\makea
+ton\internal_applicat
+ion\package-lock.json
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 3.0s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/21) ...
+  Generating static pages using 11 workers (5/21) 
+  Generating static pages using 11 workers (10/21) 
+  Generating static pages using 11 workers (15/21) 
+Γ£ô Generating static pages using 11 workers (21/21) in 423.3ms
+  Finalizing page optimization ...
+
+Route (app)
+Γöî Γùï /
+Γö£ Γùï /_not-found
+Γö£ Γùï /admin
+Γö£ Γùï /admin/checkpoints
+Γö£ Γùï /admin/judges
+Γö£ Γùï /admin/leaderboard
+Γö£ Γùï /admin/notifications
+Γö£ Γùï /admin/requests
+Γö£ Γùï /admin/teams
+Γö£ Γùï /dashboard
+Γö£ Γùï /dashboard/checkpoints
+Γö£ Γùï /dashboard/requests
+Γö£ Γùï /dashboard/team
+Γö£ Γùï /home_page
+Γö£ Γùï /judge
+Γö£ Γùï /judge/leaderboard
+Γö£ Γùï /judge/scoring
+Γö£ Γùï /profile_page
+Γöö Γùï /splash_page
+
+
+Γùï  (Static)  prerendered as static content
+

@@ -1,10 +1,11 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from "react";
+import { supabase } from "../lib/supabase";
 
 // ============== TYPES ==============
 export interface CheckpointTask {
-    id: string;
+    id: string; // UUID from DB
     text: string;
     completed: boolean;
 }
@@ -20,7 +21,8 @@ export interface Checkpoint {
 
 export interface HelpRequest {
     id: string;
-    team: string;
+    team: string; // Team Name
+    teamId?: string; // Added for DB link
     category: string;
     urgency: "critical" | "normal";
     message: string;
@@ -36,7 +38,7 @@ export interface AppNotification {
     url?: string;
     priority: "high" | "normal";
     timestamp: string;
-    read?: boolean;
+    read?: boolean; // Client-side only for now
 }
 
 // ============== JUDGE TYPES ==============
@@ -44,7 +46,7 @@ export interface Judge {
     id: string;
     name: string;
     pin: string;
-    assignedTeamIds: string[];
+    assignedTeamIds: string[]; // Computed from judge_assignments
 }
 
 export interface TeamScore {
@@ -67,8 +69,9 @@ export interface TeamInfo {
     id: string;
     name: string;
     code: string;
+    college: string;
     category: string;
-    members: { name: string; role: string; isCheckedIn: boolean }[];
+    members: { name: string; role: string; isCheckedIn: boolean; food_pref?: string }[];
     projectStatus: "submitted" | "pending" | "in-progress";
 }
 
@@ -83,97 +86,6 @@ export const SCORING_CRITERIA = [
 
 export type ScoreKey = typeof SCORING_CRITERIA[number]["key"];
 
-// ============== INITIAL DATA ==============
-const initialCheckpoints: Checkpoint[] = [
-    { id: 1, number: 1, title: "Ideation", description: "Complete the required tasks and document your progress to move forward.", isLocked: false, releasedAt: "Feb 10, 2026 10:00 AM" },
-    { id: 2, number: 2, title: "Checkpoint 2", description: "Complete the required tasks and document your progress to move forward.", isLocked: true },
-    { id: 3, number: 3, title: "Checkpoint 3", description: "Complete the required tasks and document your progress to move forward.", isLocked: true },
-];
-
-const initialJudges: Judge[] = [
-    { id: "judge-1", name: "Judge 1", pin: "1001", assignedTeamIds: [] },
-    { id: "judge-2", name: "Judge 2", pin: "1002", assignedTeamIds: [] },
-    { id: "judge-3", name: "Judge 3", pin: "1003", assignedTeamIds: [] },
-];
-
-export const allTeams: TeamInfo[] = [
-    {
-        id: "1", name: "Team Rygtus", code: "TR01", category: "GENERAL",
-        projectStatus: "submitted",
-        members: [
-            { name: "Keerthana D S", role: "Hacker", isCheckedIn: true },
-            { name: "Afnash Ali P", role: "Hacker", isCheckedIn: true },
-            { name: "Sajed Hussain", role: "Hacker", isCheckedIn: true },
-            { name: "Ruvais P", role: "Hacker", isCheckedIn: true },
-        ],
-    },
-    {
-        id: "2", name: "Team Alpha", code: "TA02", category: "GENERAL",
-        projectStatus: "in-progress",
-        members: [
-            { name: "Alex Johnson", role: "Hacker", isCheckedIn: true },
-            { name: "Sarah Chen", role: "Hacker", isCheckedIn: false },
-            { name: "Mike Davis", role: "Hacker", isCheckedIn: true },
-        ],
-    },
-    {
-        id: "3", name: "Team Beta", code: "TB03", category: "GENERAL",
-        projectStatus: "pending",
-        members: [
-            { name: "Emma Wilson", role: "Hacker", isCheckedIn: true },
-            { name: "James Lee", role: "Hacker", isCheckedIn: true },
-            { name: "Priya Patel", role: "Hacker", isCheckedIn: true },
-            { name: "Tom Brown", role: "Hacker", isCheckedIn: false },
-        ],
-    },
-    {
-        id: "4", name: "Team Gamma", code: "TG04", category: "GENERAL",
-        projectStatus: "in-progress",
-        members: [
-            { name: "Arun Kumar", role: "Hacker", isCheckedIn: true },
-            { name: "Lakshmi R", role: "Hacker", isCheckedIn: true },
-            { name: "Navi S", role: "Hacker", isCheckedIn: true },
-        ],
-    },
-    {
-        id: "5", name: "Team Delta", code: "TD05", category: "GENERAL",
-        projectStatus: "submitted",
-        members: [
-            { name: "Rahul M", role: "Hacker", isCheckedIn: true },
-            { name: "Sneha K", role: "Hacker", isCheckedIn: true },
-            { name: "Vivek T", role: "Hacker", isCheckedIn: true },
-            { name: "Divya N", role: "Hacker", isCheckedIn: true },
-        ],
-    },
-];
-
-// ============== STORAGE HELPERS ==============
-const STORAGE_KEY = "makeaton_app_state";
-
-interface StoredState {
-    checkpoints: Checkpoint[];
-    requests: HelpRequest[];
-    notifications: AppNotification[];
-    checkpointTasks: { [key: string]: CheckpointTask[] };
-    judges: Judge[];
-    scores: TeamScore[];
-}
-
-function loadState(): StoredState | null {
-    if (typeof window === "undefined") return null;
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
-}
-
-function saveState(state: StoredState) {
-    if (typeof window === "undefined") return;
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch { /* ignore */ }
-}
-
 // ============== LEADERBOARD HELPER ==============
 export interface LeaderboardEntry {
     teamId: string;
@@ -183,7 +95,7 @@ export interface LeaderboardEntry {
     breakdown: { [judgeId: string]: number };
 }
 
-export function computeLeaderboard(scores: TeamScore[]): LeaderboardEntry[] {
+export function computeLeaderboard(scores: TeamScore[], teams: TeamInfo[]): LeaderboardEntry[] {
     const teamScores: { [teamId: string]: { totals: number[]; byJudge: { [judgeId: string]: number } } } = {};
 
     for (const s of scores) {
@@ -194,7 +106,7 @@ export function computeLeaderboard(scores: TeamScore[]): LeaderboardEntry[] {
 
     return Object.entries(teamScores)
         .map(([teamId, data]) => {
-            const team = allTeams.find(t => t.id === teamId);
+            const team = teams.find(t => t.id === teamId);
             return {
                 teamId,
                 teamName: team?.name || `Team ${teamId}`,
@@ -208,20 +120,21 @@ export function computeLeaderboard(scores: TeamScore[]): LeaderboardEntry[] {
 
 // ============== CONTEXT ==============
 interface AppState {
+    teams: TeamInfo[];
     checkpoints: Checkpoint[];
     requests: HelpRequest[];
     notifications: AppNotification[];
     checkpointTasks: { [key: string]: CheckpointTask[] };
     judges: Judge[];
     scores: TeamScore[];
-    toggleCheckpointLock: (id: number) => void;
-    addRequest: (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team">) => void;
-    updateRequestStatus: (id: string, status: HelpRequest["status"]) => void;
-    addNotification: (notif: Omit<AppNotification, "id" | "timestamp">) => void;
-    updateCheckpointTasks: (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => void;
-    assignTeamToJudge: (judgeId: string, teamId: string) => void;
-    unassignTeamFromJudge: (judgeId: string, teamId: string) => void;
-    submitScore: (score: Omit<TeamScore, "id" | "timestamp">) => void;
+    toggleCheckpointLock: (id: number) => Promise<void>;
+    addRequest: (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string }) => Promise<void>;
+    updateRequestStatus: (id: string, status: HelpRequest["status"]) => Promise<void>;
+    addNotification: (notif: Omit<AppNotification, "id" | "timestamp">) => Promise<void>;
+    updateCheckpointTasks: (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => Promise<void>;
+    assignTeamToJudge: (judgeId: string, teamId: string) => Promise<void>;
+    unassignTeamFromJudge: (judgeId: string, teamId: string) => Promise<void>;
+    submitScore: (score: Omit<TeamScore, "id" | "timestamp">) => Promise<void>;
 }
 
 const AppContext = createContext<AppState | null>(null);
@@ -233,115 +146,266 @@ export function useAppState() {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-    const [checkpoints, setCheckpoints] = useState<Checkpoint[]>(initialCheckpoints);
+    const [teams, setTeams] = useState<TeamInfo[]>([]);
+    const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
     const [requests, setRequests] = useState<HelpRequest[]>([]);
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
     const [checkpointTasks, setCheckpointTasks] = useState<{ [key: string]: CheckpointTask[] }>({});
-    const [judges, setJudges] = useState<Judge[]>(initialJudges);
+    const [judges, setJudges] = useState<Judge[]>([]);
     const [scores, setScores] = useState<TeamScore[]>([]);
-    const hydrated = useRef(false);
 
-    // Load from localStorage AFTER mount
-    useEffect(() => {
-        const stored = loadState();
-        if (stored) {
-            setCheckpoints(stored.checkpoints);
-            setRequests(stored.requests);
-            setNotifications(stored.notifications);
-            setCheckpointTasks(stored.checkpointTasks);
-            if (stored.judges) setJudges(stored.judges);
-            if (stored.scores) setScores(stored.scores);
+    const fetchData = async () => {
+        // 1. Teams & Members
+        const { data: teamsData, error: teamsError } = await supabase.from('teams').select('*');
+        if (teamsError) console.error("Error fetching teams:", teamsError);
+        const { data: membersData, error: membersError } = await supabase.from('team_members').select('*');
+        if (membersError) console.error("Error fetching members:", membersError);
+
+        if (teamsData) {
+            const formattedTeams: TeamInfo[] = teamsData.map(t => ({
+                id: t.id,
+                name: t.name,
+                code: t.code,
+                college: t.college || 'Unknown',
+                category: t.category,
+                projectStatus: t.project_status as any,
+                members: membersData?.filter(m => m.team_id === t.id).map(m => ({
+                    name: m.name,
+                    role: m.role,
+                    isCheckedIn: m.is_checked_in,
+                    food_pref: m.food_pref
+                })) || []
+            }));
+            setTeams(formattedTeams);
         }
-        hydrated.current = true;
-    }, []);
 
-    // Save to localStorage whenever state changes
-    useEffect(() => {
-        if (!hydrated.current) return;
-        saveState({ checkpoints, requests, notifications, checkpointTasks, judges, scores });
-    }, [checkpoints, requests, notifications, checkpointTasks, judges, scores]);
+        // 2. Checkpoints
+        const { data: cpData, error: cpError } = await supabase.from('checkpoints').select('*').order('number');
+        if (cpError) console.error("Error fetching checkpoints:", cpError);
+        if (cpData) {
+            setCheckpoints(cpData.map(c => ({
+                id: c.id,
+                number: c.number,
+                title: c.title,
+                description: c.description,
+                isLocked: c.is_locked,
+                releasedAt: c.released_at ? new Date(c.released_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true }) : undefined,
+            })));
+        }
 
-    // Cross-tab sync
+        // 3. Tasks
+        const { data: tasksData, error: tasksError } = await supabase.from('checkpoint_tasks').select('*');
+        if (tasksError) console.error("Error fetching tasks:", tasksError);
+        if (tasksData) {
+            const taskMap: { [key: string]: CheckpointTask[] } = {};
+            tasksData.forEach(task => {
+                const key = `${task.team_id}:${task.checkpoint_id}`;
+                if (!taskMap[key]) taskMap[key] = [];
+                taskMap[key].push({ id: task.id, text: task.text, completed: task.completed });
+            });
+            setCheckpointTasks(taskMap);
+        }
+
+        // 4. Judges & Assignments
+        const { data: judgesData, error: judgesError } = await supabase.from('judges').select('*');
+        if (judgesError) console.error("Error fetching judges:", judgesError);
+        const { data: assignmentsData, error: assignmentsError } = await supabase.from('judge_assignments').select('*');
+        if (assignmentsError) console.error("Error fetching assignments:", assignmentsError);
+
+        if (judgesData) {
+            setJudges(judgesData.map(j => ({
+                id: j.id,
+                name: j.name,
+                pin: j.pin,
+                assignedTeamIds: assignmentsData?.filter(a => a.judge_id === j.id).map(a => a.team_id) || []
+            })));
+        }
+
+        // 5. Help Requests (Joined with Teams for name)
+        const { data: reqData, error: reqError } = await supabase.from('help_requests').select('*, teams(name)').order('created_at', { ascending: false });
+        if (reqError) console.error("Error fetching requests:", reqError);
+        if (reqData) {
+            setRequests(reqData.map(r => ({
+                id: r.id,
+                team: (r.teams as any)?.name || "Unknown Team",
+                teamId: r.team_id,
+                category: r.category,
+                urgency: r.urgency as any,
+                message: r.message,
+                description: r.description,
+                status: r.status as any,
+                timestamp: new Date(r.created_at).toLocaleString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true })
+            })));
+        }
+
+        // 6. Notifications
+        const { data: notifData, error: notifError } = await supabase.from('notifications').select('*').order('created_at', { ascending: false });
+        if (notifError) console.error("Error fetching notifications:", notifError);
+        if (notifData) {
+            setNotifications(notifData.map(n => ({
+                id: n.id,
+                title: n.title,
+                description: n.description,
+                url: n.url,
+                priority: n.priority as any,
+                timestamp: new Date(n.created_at).toLocaleString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true })
+            })));
+        }
+
+        // 7. Scores
+        const { data: scoresData, error: scoresError } = await supabase.from('team_scores').select('*');
+        if (scoresError) console.error("Error fetching scores:", scoresError);
+        if (scoresData) {
+            setScores(scoresData.map(s => ({
+                id: s.id,
+                judgeId: s.judge_id,
+                teamId: s.team_id,
+                scores: {
+                    innovation: s.innovation,
+                    technicalComplexity: s.technical_complexity,
+                    feasibility: s.feasibility,
+                    marketViability: s.market_viability,
+                    pitching: s.pitching,
+                    completion: s.completion
+                },
+                total: s.total,
+                timestamp: new Date(s.created_at).toLocaleString()
+            })));
+        }
+    };
+
+    // Load data on mount
     useEffect(() => {
-        const handleStorage = (e: StorageEvent) => {
-            if (e.key === STORAGE_KEY && e.newValue) {
-                try {
-                    const s: StoredState = JSON.parse(e.newValue);
-                    setCheckpoints(s.checkpoints);
-                    setRequests(s.requests);
-                    setNotifications(s.notifications);
-                    setCheckpointTasks(s.checkpointTasks);
-                    if (s.judges) setJudges(s.judges);
-                    if (s.scores) setScores(s.scores);
-                } catch { /* ignore */ }
-            }
+        fetchData();
+
+        // Realtime Subscription (works if Realtime is enabled on tables in Supabase dashboard)
+        const channel = supabase.channel('schema-db-changes')
+            .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+                fetchData(); // Simplest strategy: refetch all on any change
+            })
+            .subscribe();
+
+        // Polling fallback: refetch every 5 seconds for reliable cross-portal sync
+        const pollInterval = setInterval(() => {
+            fetchData();
+        }, 5000);
+
+        // Refetch when the user switches back to this tab/window
+        const handleFocus = () => fetchData();
+        window.addEventListener('focus', handleFocus);
+
+        return () => {
+            supabase.removeChannel(channel);
+            clearInterval(pollInterval);
+            window.removeEventListener('focus', handleFocus);
         };
-        window.addEventListener("storage", handleStorage);
-        return () => window.removeEventListener("storage", handleStorage);
     }, []);
 
-    const toggleCheckpointLock = useCallback((id: number) => {
-        setCheckpoints(prev => prev.map(cp =>
-            cp.id === id
-                ? { ...cp, isLocked: !cp.isLocked, releasedAt: cp.isLocked ? new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }) : cp.releasedAt }
-                : cp
-        ));
+    const toggleCheckpointLock = useCallback(async (id: number) => {
+        const cp = checkpoints.find(c => c.id === id);
+        if (!cp) return;
+
+        const newLocked = !cp.isLocked;
+        const releasedAt = !newLocked ? new Date().toISOString() : null;
+
+        await supabase.from('checkpoints').update({ is_locked: newLocked, released_at: releasedAt }).eq('id', id);
+        // State updates automatically via subscription or we can optimistic update here
+        setCheckpoints(prev => prev.map(c => c.id === id ? { ...c, isLocked: newLocked, releasedAt: releasedAt ? new Date(releasedAt).toLocaleString() : undefined } : c));
+    }, [checkpoints]);
+
+    const addRequest = useCallback(async (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string }) => {
+        // If teamId not provided, we should probably fail or fetch from profile if using auth.
+        // Assuming teamId is passed or handled.
+        if (!req.teamId) {
+            // Fallback for demo if teamId missing (e.g. from hardcoded components)
+            // We can fetch a default team for now or just log error.
+            console.error("Missing teamId for help request");
+            return;
+        }
+
+        await supabase.from('help_requests').insert({
+            team_id: req.teamId,
+            category: req.category,
+            urgency: req.urgency,
+            message: req.message,
+            description: req.description,
+            status: 'pending'
+        });
     }, []);
 
-    const addRequest = useCallback((req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team">) => {
-        const newReq: HelpRequest = { ...req, id: Date.now().toString(), team: "Team Rygtus", status: "pending", timestamp: new Date().toLocaleString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }).toUpperCase() };
-        setRequests(prev => [newReq, ...prev]);
-    }, []);
-
-    const updateRequestStatus = useCallback((id: string, status: HelpRequest["status"]) => {
+    const updateRequestStatus = useCallback(async (id: string, status: HelpRequest["status"]) => {
+        await supabase.from('help_requests').update({ status }).eq('id', id);
         setRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r));
     }, []);
 
-    const addNotification = useCallback((notif: Omit<AppNotification, "id" | "timestamp">) => {
-        const newNotif: AppNotification = { ...notif, id: Date.now().toString(), timestamp: new Date().toLocaleString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }) };
-        setNotifications(prev => [newNotif, ...prev]);
+    const addNotification = useCallback(async (notif: Omit<AppNotification, "id" | "timestamp">) => {
+        await supabase.from('notifications').insert({
+            title: notif.title,
+            description: notif.description,
+            url: notif.url,
+            priority: notif.priority
+        });
     }, []);
 
-    const updateCheckpointTasks = useCallback((teamId: string, checkpointId: number, tasks: CheckpointTask[]) => {
+    const updateCheckpointTasks = useCallback(async (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => {
+        // First, check if tasks exist. If not, insert. If so, update status.
+        // Actually, we are passing the full list of tasks for the checkpoint.
+        // And DB stores individual tasks.
+        // Strategy:
+        // 1. Get existing tasks for this team/checkpoint from DB? Not needed if we trust the input.
+        // 2. We can't batch delete/insert easily without transaction or complex query.
+        // 3. Upsert by (team_id, checkpoint_id, text) because text is unique per checkpoint/team in current model?
+        // Wait, text might change?
+        // A better approach is to rely on 'text' being the unique key logic as per schema.
+
+        const upsertData = tasks.map(t => ({
+            team_id: teamId,
+            checkpoint_id: checkpointId,
+            text: t.text,
+            completed: t.completed
+        }));
+
+        const { error } = await supabase.from('checkpoint_tasks').upsert(upsertData, { onConflict: 'team_id,checkpoint_id,text' });
+        if (error) console.error("Error updating tasks:", error);
+
+        // Local update
         const key = `${teamId}:${checkpointId}`;
         setCheckpointTasks(prev => ({ ...prev, [key]: tasks }));
     }, []);
 
-    const assignTeamToJudge = useCallback((judgeId: string, teamId: string) => {
+    const assignTeamToJudge = useCallback(async (judgeId: string, teamId: string) => {
+        await supabase.from('judge_assignments').insert({ judge_id: judgeId, team_id: teamId });
         setJudges(prev => prev.map(j =>
-            j.id === judgeId && !j.assignedTeamIds.includes(teamId)
-                ? { ...j, assignedTeamIds: [...j.assignedTeamIds, teamId] }
-                : j
+            j.id === judgeId ? { ...j, assignedTeamIds: [...j.assignedTeamIds, teamId] } : j
         ));
     }, []);
 
-    const unassignTeamFromJudge = useCallback((judgeId: string, teamId: string) => {
+    const unassignTeamFromJudge = useCallback(async (judgeId: string, teamId: string) => {
+        await supabase.from('judge_assignments').delete().match({ judge_id: judgeId, team_id: teamId });
         setJudges(prev => prev.map(j =>
             j.id === judgeId ? { ...j, assignedTeamIds: j.assignedTeamIds.filter(id => id !== teamId) } : j
         ));
     }, []);
 
-    const submitScore = useCallback((score: Omit<TeamScore, "id" | "timestamp">) => {
-        const newScore: TeamScore = {
-            ...score,
-            id: Date.now().toString(),
-            timestamp: new Date().toLocaleString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }),
+    const submitScore = useCallback(async (score: Omit<TeamScore, "id" | "timestamp">) => {
+        const dbScore = {
+            judge_id: score.judgeId,
+            team_id: score.teamId,
+            innovation: score.scores.innovation,
+            technical_complexity: score.scores.technicalComplexity,
+            feasibility: score.scores.feasibility,
+            market_viability: score.scores.marketViability,
+            pitching: score.scores.pitching,
+            completion: score.scores.completion,
+            total: score.total
         };
-        // Replace existing score by same judge for same team, or add new
-        setScores(prev => {
-            const existing = prev.findIndex(s => s.judgeId === score.judgeId && s.teamId === score.teamId);
-            if (existing >= 0) {
-                const updated = [...prev];
-                updated[existing] = newScore;
-                return updated;
-            }
-            return [...prev, newScore];
-        });
+
+        await supabase.from('team_scores').upsert(dbScore, { onConflict: 'judge_id,team_id' });
     }, []);
 
     return (
         <AppContext.Provider value={{
-            checkpoints, requests, notifications, checkpointTasks, judges, scores,
+            teams, checkpoints, requests, notifications, checkpointTasks, judges, scores,
             toggleCheckpointLock, addRequest, updateRequestStatus, addNotification,
             updateCheckpointTasks, assignTeamToJudge, unassignTeamFromJudge, submitScore,
         }}>
@@ -349,3 +413,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         </AppContext.Provider>
     );
 }
+
+// Keeping this for backward compatibility (but empty) to allow step-by-step migration
+export const allTeams: TeamInfo[] = [];

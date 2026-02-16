@@ -3,11 +3,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, CheckCircle2, Flag, ChevronDown, ChevronUp, Circle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAppState, allTeams } from "../context/AppContext";
+import { useAppState } from "../context/AppContext";
 import Link from "next/link";
 
 export default function JudgeHomePage() {
-    const { judges, checkpoints, checkpointTasks } = useAppState();
+    const { judges, checkpoints, checkpointTasks, teams } = useAppState();
     const [judgeId, setJudgeId] = useState("");
     const [expandedTeam, setExpandedTeam] = useState<string | null>(null);
 
@@ -16,7 +16,7 @@ export default function JudgeHomePage() {
     }, []);
 
     const judge = judges.find(j => j.id === judgeId);
-    const assignedTeams = allTeams.filter(t => judge?.assignedTeamIds.includes(t.id));
+    const assignedTeams = teams.filter(t => judge?.assignedTeamIds.includes(t.id));
 
     return (
         <div className="min-h-screen p-8">
@@ -59,7 +59,7 @@ export default function JudgeHomePage() {
                                         </span>
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900">{team.name}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">{team.category} · {team.members.length} members</p>
+                                    <p className="text-sm text-gray-500 mt-1">{team.college} · {team.category} · {team.members.length} members</p>
                                 </div>
 
                                 {/* Members */}
