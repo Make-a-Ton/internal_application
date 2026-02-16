@@ -31,7 +31,7 @@ export default function RequestsPage() {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case "done": return "bg-green-500";
+            case "done": return "bg-[#E7BB88]";
             case "in-progress": return "bg-yellow-500";
             case "pending": return "bg-[#D4AF37]";
             default: return "bg-[#C09B6E]";

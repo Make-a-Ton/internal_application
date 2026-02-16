@@ -27,7 +27,7 @@ export default function AdminSidebar() {
         <aside className="fixed left-0 top-0 bottom-0 w-64 bg-[#5C0124] text-[#F4E4BC] flex flex-col z-40">
             {/* Logo */}
             <div className="p-6 border-b border-[#7A2840]">
-                <h1 className="text-xl font-extrabold tracking-tight">MAKE-A-TON</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight">MAKE-A-TON</h1>
                 <p className="text-xs text-[#D4AF37] uppercase tracking-widest mt-1">Admin Panel</p>
             </div>
 
@@ -41,8 +41,8 @@ export default function AdminSidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${isActive
-                                    ? "bg-[#7A2840] text-[#F4E4BC] border-r-2 border-[#D4AF37]"
-                                    : "text-[#C09B6E] hover:text-[#F4E4BC] hover:bg-[#7A2840]/50"
+                                ? "bg-[#7A2840] text-[#F4E4BC] border-r-2 border-[#D4AF37]"
+                                : "text-[#C09B6E] hover:text-[#F4E4BC] hover:bg-[#7A2840]/50"
                                 }`}
                         >
                             <item.icon className="h-5 w-5" />

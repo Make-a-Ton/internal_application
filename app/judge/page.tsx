@@ -51,7 +51,7 @@ export default function JudgeHomePage() {
                                 <div className="p-6 border-b border-[#7A2840]">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="px-3 py-1 bg-[#D4AF37] text-[#3A0015] text-xs font-bold rounded-full">{team.code}</span>
-                                        <span className={`px-2 py-1 text-xs font-bold rounded-full ${team.projectStatus === "submitted" ? "bg-green-900/30 text-green-400" :
+                                        <span className={`px-2 py-1 text-xs font-bold rounded-full ${team.projectStatus === "submitted" ? "bg-[#E7BB88]/20 text-[#E7BB88]" :
                                             team.projectStatus === "in-progress" ? "bg-blue-900/30 text-blue-400" :
                                                 "bg-yellow-900/30 text-yellow-400"
                                             }`}>
@@ -72,7 +72,7 @@ export default function JudgeHomePage() {
                                                     {m.name.split(" ").map(n => n[0]).join("")}
                                                 </div>
                                                 <span className="text-sm text-[#F4E4BC]">{m.name}</span>
-                                                <CheckCircle2 className={`h-3 w-3 ${m.isCheckedIn ? "text-green-400" : "text-[#C09B6E]/30"}`} />
+                                                <CheckCircle2 className={`h-3 w-3 ${m.isCheckedIn ? "text-[#E7BB88]" : "text-[#C09B6E]/30"}`} />
                                             </div>
                                         ))}
                                     </div>
@@ -116,7 +116,7 @@ export default function JudgeHomePage() {
                                                                 {cp.isLocked ? (
                                                                     <span className="text-xs px-2 py-0.5 bg-[#5C0124] text-[#C09B6E] rounded-full font-bold">Locked</span>
                                                                 ) : (
-                                                                    <span className="text-xs px-2 py-0.5 bg-green-900/30 text-green-400 rounded-full font-bold">Released</span>
+                                                                    <span className="text-xs px-2 py-0.5 bg-[#E7BB88]/20 text-[#E7BB88] rounded-full font-bold">Released</span>
                                                                 )}
                                                             </div>
 
@@ -131,7 +131,7 @@ export default function JudgeHomePage() {
                                                                     <div className="flex items-center gap-2 mb-2">
                                                                         <div className="flex-1 h-1.5 bg-[#5C0124] rounded-full overflow-hidden">
                                                                             <div
-                                                                                className="h-full bg-green-400 rounded-full transition-all"
+                                                                                className="h-full bg-[#E7BB88] rounded-full transition-all"
                                                                                 style={{ width: `${tasks.length > 0 ? (completed / tasks.length) * 100 : 0}%` }}
                                                                             />
                                                                         </div>
@@ -141,7 +141,7 @@ export default function JudgeHomePage() {
                                                                         {tasks.map(task => (
                                                                             <div key={task.id} className="flex items-start gap-2 text-sm">
                                                                                 {task.completed ? (
-                                                                                    <CheckCircle2 className="h-4 w-4 text-green-400 mt-0.5 shrink-0" />
+                                                                                    <CheckCircle2 className="h-4 w-4 text-[#E7BB88] mt-0.5 shrink-0" />
                                                                                 ) : (
                                                                                     <Circle className="h-4 w-4 text-[#C09B6E]/50 mt-0.5 shrink-0" />
                                                                                 )}

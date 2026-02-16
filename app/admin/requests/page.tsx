@@ -25,7 +25,7 @@ export default function AdminRequestsPage() {
         switch (status) {
             case "pending": return <AlertCircle className="h-4 w-4 text-orange-400" />;
             case "in-progress": return <Clock className="h-4 w-4 text-blue-400" />;
-            case "done": return <CheckCircle2 className="h-4 w-4 text-green-400" />;
+            case "done": return <CheckCircle2 className="h-4 w-4 text-[#E7BB88]" />;
         }
     };
 

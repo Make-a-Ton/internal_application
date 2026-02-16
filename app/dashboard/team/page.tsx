@@ -6,7 +6,7 @@ import { ChevronLeft, Bell, User, Heart, ThumbsUp, Phone, QrCode, Clock, LogOut,
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BottomNav from "../../components/BottomNav";
-import { supabase } from "../../../lib/supabase";
+import { supabase } from "../../lib/supabase";
 
 interface TeamData {
     id: string;
@@ -92,20 +92,20 @@ export default function TeamPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 text-gray-400 animate-spin" />
+            <div className="min-h-screen bg-[#5C0124] flex items-center justify-center">
+                <Loader2 className="h-8 w-8 text-[#E7BB88] animate-spin" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+            <div className="min-h-screen bg-[#5C0124] flex items-center justify-center px-6">
                 <div className="text-center">
-                    <p className="text-red-500 font-semibold mb-2">{error}</p>
+                    <p className="text-red-400 font-semibold mb-2">{error}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="text-sm text-gray-500 underline"
+                        className="text-sm text-[#C09B6E] underline"
                     >
                         Retry
                     </button>
@@ -176,7 +176,7 @@ export default function TeamPage() {
                             {projectStatus}
                         </h3>
                         {projectStatus === "submitted" && (
-                            <CheckCircle2 className="h-6 w-6 text-green-400" />
+                            <CheckCircle2 className="h-6 w-6 text-[#E7BB88]" />
                         )}
                     </div>
                 </div>
@@ -216,7 +216,7 @@ export default function TeamPage() {
                                             {member.role}
                                         </span>
                                         {member.isCheckedIn && (
-                                            <span className="px-2 py-0.5 bg-green-900/30 text-green-400 text-xs font-bold rounded-full">
+                                            <span className="px-2 py-0.5 bg-[#E7BB88]/20 text-[#E7BB88] text-xs font-bold rounded-full">
                                                 CHECKED IN
                                             </span>
                                         )}
