@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Users, Flag, MessageSquare, Bell, AlertCircle, CheckCircle2, Clock, Settings } from "lucide-react";
+import { Users, Flag, MessageSquare, Bell, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import Link from "next/link";
 import { useAppState } from "../context/AppContext";
 
@@ -20,20 +20,12 @@ export default function AdminDashboard() {
 
     return (
         <div className="min-h-screen p-8 relative overflow-hidden">
-            {/* Rotating gear */}
-            <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-                className="fixed top-[-10%] right-[-5%] text-[#D4AF37]/5 pointer-events-none z-0"
-            >
-                <Settings size={400} />
-            </motion.div>
 
             <div className="relative z-10">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-[#D4AF37]">Admin Dashboard</h1>
-                    <p className="text-[#C09B6E] mt-1">Manage your MAKE-A-TON event</p>
+                    <h1 className="text-3xl font-bold text-[#5C0124]">Admin Dashboard</h1>
+                    <p className="text-[#8B6F4E] mt-1">Manage your MAKE-A-TON event</p>
                 </div>
 
                 {/* Stats Grid */}
@@ -52,8 +44,8 @@ export default function AdminDashboard() {
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.color}`}>
                                     <stat.icon className="h-6 w-6" />
                                 </div>
-                                <p className="text-sm text-[#C09B6E] mb-1">{stat.label}</p>
-                                <p className="text-3xl font-bold text-[#F4E4BC]">{stat.value}</p>
+                                <p className="text-sm text-[#3A0015]/70 mb-1">{stat.label}</p>
+                                <p className="text-3xl font-bold text-[#3A0015]">{stat.value}</p>
                             </Link>
                         </motion.div>
                     ))}
@@ -68,16 +60,16 @@ export default function AdminDashboard() {
                 >
                     <div className="p-6 border-b border-[#7A2840] flex items-center justify-between">
                         <div>
-                            <h2 className="text-lg font-bold text-[#F4E4BC]">Recent Requests</h2>
-                            <p className="text-sm text-[#C09B6E]">Latest help requests from teams</p>
+                            <h2 className="text-lg font-bold text-[#3A0015]">Recent Requests</h2>
+                            <p className="text-sm text-[#3A0015]/60">Latest help requests from teams</p>
                         </div>
-                        <Link href="/admin/requests" className="text-sm font-semibold text-[#D4AF37] hover:text-[#F4E4BC]">
+                        <Link href="/admin/requests" className="text-sm font-semibold text-[#5C0124] hover:text-[#7A2840]">
                             View All →
                         </Link>
                     </div>
                     <div className="divide-y divide-[#7A2840]/50">
                         {requests.length === 0 ? (
-                            <div className="p-8 text-center text-[#C09B6E] text-sm">No requests yet</div>
+                            <div className="p-8 text-center text-[#3A0015]/50 text-sm">No requests yet</div>
                         ) : (
                             requests.slice(0, 5).map((req) => (
                                 <div key={req.id} className="px-6 py-4 flex items-center justify-between">
@@ -86,8 +78,8 @@ export default function AdminDashboard() {
                                             req.status === "in-progress" ? "bg-blue-500" : "bg-[#E7BB88]"
                                             }`} />
                                         <div>
-                                            <p className="font-medium text-[#F4E4BC]">{req.message}</p>
-                                            <p className="text-xs text-[#C09B6E]">{req.team} · {req.timestamp}</p>
+                                            <p className="font-medium text-[#3A0015]">{req.message}</p>
+                                            <p className="text-xs text-[#3A0015]/60">{req.team} · {req.timestamp}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">

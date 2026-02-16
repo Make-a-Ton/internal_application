@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { ChevronLeft, Bell, User, Heart, ThumbsUp, Phone, QrCode, Clock, LogOut, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import BottomNav from "../../components/BottomNav";
 import { supabase } from "../../lib/supabase";
 
 interface TeamData {
@@ -115,25 +114,25 @@ export default function TeamPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#5C0124] pb-24">
+        <div className="min-h-screen bg-transparent pb-24">
             {/* Header */}
-            <header className="sticky top-0 z-30 bg-[#5C0124] border-b border-[#7A2840]">
+            <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#7A2840]/20">
                 <div className="flex items-center justify-between px-4 py-4">
                     <div className="flex items-center gap-3">
                         <Link
                             href="/dashboard"
-                            className="p-2 -ml-2 hover:bg-[#7A2840] rounded-full transition-colors"
+                            className="p-2 -ml-2 hover:bg-[#7A2840]/10 rounded-full transition-colors"
                         >
-                            <ChevronLeft className="h-6 w-6 text-[#D4AF37]" />
+                            <ChevronLeft className="h-6 w-6 text-[#5C0124]" />
                         </Link>
-                        <h1 className="text-xl font-extrabold text-[#F4E4BC]">Profile</h1>
+                        <h1 className="text-xl font-extrabold text-[#5C0124]">Profile</h1>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-[#7A2840] rounded-full transition-colors">
-                            <Bell className="h-5 w-5 text-[#C09B6E]" />
+                        <button className="p-2 hover:bg-[#7A2840]/10 rounded-full transition-colors">
+                            <Bell className="h-5 w-5 text-[#8B6F4E]" />
                         </button>
-                        <div className="w-9 h-9 bg-[#7A2840] rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-[#D4AF37]">TR</span>
+                        <div className="w-9 h-9 bg-[#5C0124] rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-[#E7BB88]">TR</span>
                         </div>
                     </div>
                 </div>
@@ -156,7 +155,7 @@ export default function TeamPage() {
                 {/* Category Badge */}
                 <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#5C0124] text-[#C09B6E] text-xs font-bold rounded-full uppercase tracking-wider border border-[#7A2840]">
                     <span className="w-1.5 h-1.5 bg-[#D4AF37] rounded-full" />
-                    {teamCategory}
+                    {team?.track || "General"}
                 </span>
             </motion.section>
 
@@ -167,12 +166,12 @@ export default function TeamPage() {
                 transition={{ delay: 0.1 }}
                 className="mx-4 mt-6"
             >
-                <div className="bg-[#7A2840]/50 rounded-xl p-5 border border-[#7A2840]">
-                    <p className="text-xs font-bold text-[#C09B6E] uppercase tracking-widest mb-2">
+                <div className="bg-white/60 backdrop-blur-md rounded-xl p-5 border border-[#5C0124]/10 shadow-sm">
+                    <p className="text-xs font-bold text-[#5C0124] uppercase tracking-widest mb-2">
                         Project Status
                     </p>
                     <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-extrabold text-[#F4E4BC] capitalize">
+                        <h3 className="text-xl font-extrabold text-[#3A0015] capitalize">
                             {projectStatus}
                         </h3>
                         {projectStatus === "submitted" && (
@@ -190,8 +189,8 @@ export default function TeamPage() {
                 className="mx-4 mt-6"
             >
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Team</h2>
-                    <span className="text-xs text-[#C09B6E]">{teamMembers.length}</span>
+                    <h2 className="text-xs font-bold text-[#5C0124] uppercase tracking-widest">Team</h2>
+                    <span className="text-xs text-[#8B6F4E]">{members.length}</span>
                 </div>
 
                 <div className="space-y-3">
@@ -201,28 +200,28 @@ export default function TeamPage() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * index }}
-                            className="bg-[#7A2840]/50 rounded-xl p-4 border border-[#7A2840] flex items-center justify-between"
+                            className="bg-white/60 backdrop-blur-md rounded-xl p-4 border border-[#5C0124]/10 shadow-sm flex items-center justify-between"
                         >
                             <div className="flex items-center gap-4">
                                 {/* Avatar */}
                                 <div className="w-10 h-10 bg-[#5C0124] rounded-full flex items-center justify-center">
-                                    <User className="h-5 w-5 text-[#C09B6E]" />
+                                    <User className="h-5 w-5 text-[#E7BB88]" />
                                 </div>
 
                                 {/* Info */}
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-xs font-semibold text-[#C09B6E] uppercase">
-                                            {member.role}
+                                        <span className="text-xs font-semibold text-[#3A0015] uppercase">
+                                            Member
                                         </span>
-                                        {member.isCheckedIn && (
+                                        {member.checkin && (
                                             <span className="px-2 py-0.5 bg-[#E7BB88]/20 text-[#E7BB88] text-xs font-bold rounded-full">
                                                 CHECKED IN
                                             </span>
                                         )}
                                     </div>
                                     {/* Action Icons */}
-                                    <div className="flex items-center gap-3 text-[#C09B6E]/50">
+                                    <div className="flex items-center gap-3 text-[#3A0015]/30">
                                         <Heart className="h-4 w-4" />
                                         <ThumbsUp className="h-4 w-4" />
                                         <Phone className="h-4 w-4" />
@@ -232,10 +231,10 @@ export default function TeamPage() {
 
                             {/* Name (Right Side) */}
                             <div className="flex items-center gap-4">
-                                <span className="font-bold text-[#F4E4BC]">{member.name}</span>
+                                <span className="font-bold text-[#3A0015]">{member.name}</span>
 
                                 {/* QR Code Button */}
-                                <button className="w-10 h-10 bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015] rounded-xl flex items-center justify-center transition-colors">
+                                <button className="w-10 h-10 bg-[#F4E4BC] hover:bg-[#E7BB88] text-[#3A0015] rounded-xl flex items-center justify-center transition-colors">
                                     <QrCode className="h-5 w-5" />
                                 </button>
                             </div>
@@ -253,7 +252,7 @@ export default function TeamPage() {
             >
                 <Link
                     href="/dashboard/checkpoints"
-                    className="w-full bg-[#7A2840]/50 hover:bg-[#7A2840]/70 text-[#F4E4BC] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors border border-[#7A2840]"
+                    className="w-full bg-white/60 backdrop-blur-md hover:bg-white/80 text-[#5C0124] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors border border-[#5C0124]/10 shadow-sm"
                 >
                     <Clock className="h-5 w-5" />
                     View Checkpoints
@@ -281,12 +280,10 @@ export default function TeamPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="text-center text-xs text-[#C09B6E]/50 mt-6"
+                className="text-center text-xs text-[#3A0015]/30 mt-6"
             >
                 MAKEATON v1.0
             </motion.p>
-
-            <BottomNav />
         </div>
     );
 }

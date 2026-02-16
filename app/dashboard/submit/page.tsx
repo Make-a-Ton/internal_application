@@ -7,7 +7,7 @@ import {
     Link2, Github, Video, Upload, X, Save
 } from "lucide-react";
 import Link from "next/link";
-import BottomNav from "../../components/BottomNav";
+
 
 interface FileUpload {
     name: string;
@@ -76,29 +76,29 @@ export default function SubmitProjectPage() {
         setTimeout(() => setSaved(false), 3000);
     };
 
-    const inputClass = "w-full px-4 py-3 bg-[#3A0015] border border-[#7A2840] rounded-xl text-[#F4E4BC] text-sm placeholder-[#C09B6E]/50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition-all";
-    const labelClass = "block text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-2 text-center";
+    const inputClass = "w-full px-4 py-3 bg-[#F8F9FA] border border-[#7A2840]/20 rounded-xl text-[#3A0015] text-sm placeholder-[#3A0015]/40 focus:outline-none focus:ring-2 focus:ring-[#5C0124] focus:border-transparent transition-all";
+    const labelClass = "block text-xs font-bold text-[#5C0124] uppercase tracking-widest mb-2 text-center";
 
     return (
-        <div className="min-h-screen bg-[#5C0124] pb-28">
+        <div className="min-h-screen bg-transparent pb-28">
             {/* Header */}
-            <header className="sticky top-0 z-30 bg-[#5C0124] border-b border-[#7A2840]">
+            <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#7A2840]/20">
                 <div className="flex items-center justify-between px-4 py-4">
                     <div className="flex items-center gap-3">
                         <Link
                             href="/dashboard"
-                            className="p-2 -ml-2 hover:bg-[#7A2840] rounded-full transition-colors"
+                            className="p-2 -ml-2 hover:bg-[#7A2840]/10 rounded-full transition-colors"
                         >
-                            <ChevronLeft className="h-6 w-6 text-[#D4AF37]" />
+                            <ChevronLeft className="h-6 w-6 text-[#5C0124]" />
                         </Link>
-                        <h1 className="text-xl font-extrabold text-[#F4E4BC]">Project Submission</h1>
+                        <h1 className="text-xl font-extrabold text-[#5C0124]">Project Submission</h1>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-[#7A2840] rounded-full transition-colors">
-                            <Bell className="h-5 w-5 text-[#C09B6E]" />
+                        <button className="p-2 hover:bg-[#7A2840]/10 rounded-full transition-colors">
+                            <Bell className="h-5 w-5 text-[#8B6F4E]" />
                         </button>
-                        <div className="w-9 h-9 bg-[#7A2840] rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-[#D4AF37]">TR</span>
+                        <div className="w-9 h-9 bg-[#5C0124] rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-[#E7BB88]">TR</span>
                         </div>
                     </div>
                 </div>
@@ -110,11 +110,11 @@ export default function SubmitProjectPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="bg-[#7A2840]/50 rounded-2xl p-6 border border-[#7A2840]"
+                    className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-[#5C0124]/10 shadow-sm"
                 >
                     <div className="flex items-center gap-2 mb-6">
-                        <FileText className="h-5 w-5 text-[#D4AF37]" />
-                        <h2 className="text-lg font-extrabold text-[#F4E4BC]">General Information</h2>
+                        <FileText className="h-5 w-5 text-[#5C0124]" />
+                        <h2 className="text-lg font-extrabold text-[#3A0015]">General Information</h2>
                     </div>
 
                     <div className="space-y-5">
@@ -185,11 +185,11 @@ export default function SubmitProjectPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="bg-[#7A2840]/50 rounded-2xl p-6 border border-[#7A2840]"
+                    className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-[#5C0124]/10 shadow-sm"
                 >
                     <div className="flex items-center gap-2 mb-6">
-                        <Globe className="h-5 w-5 text-[#D4AF37]" />
-                        <h2 className="text-lg font-extrabold text-[#F4E4BC]">Links & Media</h2>
+                        <Globe className="h-5 w-5 text-[#5C0124]" />
+                        <h2 className="text-lg font-extrabold text-[#3A0015]">Links & Media</h2>
                     </div>
 
                     <div className="space-y-5">
@@ -198,7 +198,7 @@ export default function SubmitProjectPage() {
                             <div>
                                 <label className={labelClass}>GitHub Repository</label>
                                 <div className="relative">
-                                    <Github className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#C09B6E]/50" />
+                                    <Github className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#3A0015]/40" />
                                     <input
                                         type="url"
                                         value={githubRepo}
@@ -211,7 +211,7 @@ export default function SubmitProjectPage() {
                             <div>
                                 <label className={labelClass}>Demo Video URL</label>
                                 <div className="relative">
-                                    <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#C09B6E]/50" />
+                                    <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#3A0015]/40" />
                                     <input
                                         type="url"
                                         value={demoVideoUrl}
@@ -228,7 +228,7 @@ export default function SubmitProjectPage() {
                             {/* Architecture Diagram */}
                             <div>
                                 <label className={labelClass}>Architecture Diagram</label>
-                                <p className="text-[10px] text-[#C09B6E]/70 text-center mb-2">Images Only</p>
+                                <p className="text-[10px] text-[#3A0015]/60 text-center mb-2">Images Only</p>
                                 <input
                                     ref={archRef}
                                     type="file"
@@ -237,14 +237,14 @@ export default function SubmitProjectPage() {
                                     className="hidden"
                                 />
                                 {architectureDiagram ? (
-                                    <div className="flex items-center gap-2 bg-[#3A0015] border border-[#7A2840] rounded-xl px-3 py-2">
-                                        <span className="text-xs text-[#F4E4BC] truncate flex-1">{architectureDiagram.name}</span>
+                                    <div className="flex items-center gap-2 bg-[#F8F9FA] border border-[#7A2840]/20 rounded-xl px-3 py-2">
+                                        <span className="text-xs text-[#3A0015] truncate flex-1">{architectureDiagram.name}</span>
                                         {architectureDiagram.preview && (
                                             <img src={architectureDiagram.preview} alt="" className="h-8 w-8 rounded object-cover" />
                                         )}
                                         <button
                                             onClick={() => setArchitectureDiagram(null)}
-                                            className="text-red-400 hover:text-red-300 flex-shrink-0"
+                                            className="text-red-500 hover:text-red-600 flex-shrink-0"
                                         >
                                             <X className="h-4 w-4" />
                                         </button>
@@ -252,7 +252,7 @@ export default function SubmitProjectPage() {
                                 ) : (
                                     <button
                                         onClick={() => archRef.current?.click()}
-                                        className="w-full py-3 border-2 border-dashed border-[#7A2840] rounded-xl text-xs text-[#C09B6E] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors flex items-center justify-center gap-2"
+                                        className="w-full py-3 border-2 border-dashed border-[#7A2840]/30 rounded-xl text-xs text-[#3A0015]/60 hover:border-[#5C0124] hover:text-[#5C0124] transition-colors flex items-center justify-center gap-2"
                                     >
                                         <Upload className="h-4 w-4" />
                                         Upload Image
@@ -263,7 +263,7 @@ export default function SubmitProjectPage() {
                             {/* Presentation Slides */}
                             <div>
                                 <label className={labelClass}>Presentation Slides</label>
-                                <p className="text-[10px] text-[#C09B6E]/70 text-center mb-2">PDF Only</p>
+                                <p className="text-[10px] text-[#3A0015]/60 text-center mb-2">PDF Only</p>
                                 <input
                                     ref={slidesRef}
                                     type="file"
@@ -272,11 +272,11 @@ export default function SubmitProjectPage() {
                                     className="hidden"
                                 />
                                 {presentationSlides ? (
-                                    <div className="flex items-center gap-2 bg-[#3A0015] border border-[#7A2840] rounded-xl px-3 py-2">
-                                        <span className="text-xs text-[#F4E4BC] truncate flex-1">{presentationSlides.name}</span>
+                                    <div className="flex items-center gap-2 bg-[#F8F9FA] border border-[#7A2840]/20 rounded-xl px-3 py-2">
+                                        <span className="text-xs text-[#3A0015] truncate flex-1">{presentationSlides.name}</span>
                                         <button
                                             onClick={() => setPresentationSlides(null)}
-                                            className="text-red-400 hover:text-red-300 flex-shrink-0"
+                                            className="text-red-500 hover:text-red-600 flex-shrink-0"
                                         >
                                             <X className="h-4 w-4" />
                                         </button>
@@ -284,7 +284,7 @@ export default function SubmitProjectPage() {
                                 ) : (
                                     <button
                                         onClick={() => slidesRef.current?.click()}
-                                        className="w-full py-3 border-2 border-dashed border-[#7A2840] rounded-xl text-xs text-[#C09B6E] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors flex items-center justify-center gap-2"
+                                        className="w-full py-3 border-2 border-dashed border-[#7A2840]/30 rounded-xl text-xs text-[#3A0015]/60 hover:border-[#5C0124] hover:text-[#5C0124] transition-colors flex items-center justify-center gap-2"
                                     >
                                         <Upload className="h-4 w-4" />
                                         Upload PDF
@@ -300,14 +300,14 @@ export default function SubmitProjectPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-[#7A2840]/50 rounded-2xl p-6 border border-[#7A2840]"
+                    className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-[#5C0124]/10 shadow-sm"
                 >
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
-                            <ImageIcon className="h-5 w-5 text-[#D4AF37]" />
-                            <h2 className="text-lg font-extrabold text-[#F4E4BC]">Screenshots (Max 6)</h2>
+                            <ImageIcon className="h-5 w-5 text-[#5C0124]" />
+                            <h2 className="text-lg font-extrabold text-[#3A0015]">Screenshots (Max 6)</h2>
                         </div>
-                        <span className="text-xs text-[#C09B6E]">{screenshots.length}/6</span>
+                        <span className="text-xs text-[#3A0015]/60">{screenshots.length}/6</span>
                     </div>
 
                     <input
@@ -322,7 +322,7 @@ export default function SubmitProjectPage() {
                     {/* Screenshot Grid */}
                     <div className="grid grid-cols-3 gap-3 mb-4">
                         {screenshots.map((ss, i) => (
-                            <div key={i} className="relative group aspect-video rounded-xl overflow-hidden border border-[#7A2840]">
+                            <div key={i} className="relative group aspect-video rounded-xl overflow-hidden border border-[#7A2840]/20">
                                 <img src={ss.preview} alt={ss.name} className="w-full h-full object-cover" />
                                 <button
                                     onClick={() => removeScreenshot(i)}
@@ -337,7 +337,7 @@ export default function SubmitProjectPage() {
                     {screenshots.length < 6 && (
                         <button
                             onClick={() => screenshotRef.current?.click()}
-                            className="w-full py-4 border-2 border-dashed border-[#7A2840] rounded-xl text-sm text-[#C09B6E] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-4 border-2 border-dashed border-[#7A2840]/30 rounded-xl text-sm text-[#3A0015]/60 hover:border-[#5C0124] hover:text-[#5C0124] transition-colors flex items-center justify-center gap-2"
                         >
                             <Upload className="h-4 w-4" />
                             Add Screenshots
@@ -357,7 +357,7 @@ export default function SubmitProjectPage() {
                         disabled={isSaving}
                         className={`w-full py-4 rounded-2xl font-extrabold text-base flex items-center justify-center gap-2 transition-all shadow-lg ${saved
                             ? "bg-[#E7BB88] text-[#5C0023]"
-                            : "bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015]"
+                            : "bg-[#5C0124] hover:bg-[#7A2840] text-white"
                             } ${isSaving ? "opacity-70 cursor-not-allowed" : ""}`}
                     >
                         <Save className="h-5 w-5" />
@@ -366,7 +366,7 @@ export default function SubmitProjectPage() {
                 </motion.div>
             </div>
 
-            <BottomNav />
         </div>
+
     );
 }
