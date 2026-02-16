@@ -52,7 +52,6 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
 
     const handleSubmit = () => {
         console.log("Submitting checkpoint tasks:", { checkpointId: checkpoint?.id, tasks });
-        // TODO: API call to save tasks
         onClose();
     };
 
@@ -79,22 +78,22 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.95 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 pb-10 max-h-[90vh] overflow-y-auto"
+                        className="fixed bottom-0 left-0 right-0 z-50 bg-[#5C0124] rounded-t-3xl p-6 pb-10 max-h-[90vh] overflow-y-auto"
                     >
                         {/* Handle */}
-                        <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4" />
+                        <div className="w-12 h-1.5 bg-[#7A2840] rounded-full mx-auto mb-4" />
 
                         {/* Header */}
                         <div className="flex items-start justify-between mb-6">
                             <div>
-                                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">
+                                <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-1">
                                     CHECKPOINT {checkpoint.number}
                                 </p>
-                                <h2 className="text-3xl font-extrabold text-gray-900">{checkpoint.title}</h2>
+                                <h2 className="text-3xl font-extrabold text-[#F4E4BC]">{checkpoint.title}</h2>
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                                className="p-2 text-[#C09B6E] hover:text-[#F4E4BC] hover:bg-[#7A2840] rounded-full transition-colors"
                             >
                                 <X className="h-6 w-6" />
                             </button>
@@ -102,15 +101,15 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
 
                         {/* Plan Next Button */}
                         <button
-                            className="w-full py-3 px-6 border-2 border-gray-900 text-gray-900 font-bold rounded-full text-center mb-8 hover:bg-gray-100 transition-colors"
+                            className="w-full py-3 px-6 border-2 border-[#D4AF37] text-[#D4AF37] font-bold rounded-full text-center mb-8 hover:bg-[#D4AF37]/10 transition-colors"
                         >
                             Plan Next
                         </button>
 
                         {/* Plan Next Steps Section */}
                         <div className="text-center mb-6">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Plan Next Steps</h3>
-                            <p className="text-gray-500 text-sm">
+                            <h3 className="text-xl font-bold text-[#F4E4BC] mb-2">Plan Next Steps</h3>
+                            <p className="text-[#C09B6E] text-sm">
                                 What are your goals for Checkpoint {nextCheckpointNumber}?
                             </p>
                         </div>
@@ -122,7 +121,7 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                                     key={task.id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className={`flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 ${checkpoint.isLocked ? "opacity-60" : ""
+                                    className={`flex items-center gap-3 p-4 bg-[#7A2840]/50 rounded-2xl border border-[#7A2840] ${checkpoint.isLocked ? "opacity-60" : ""
                                         }`}
                                 >
                                     <button
@@ -130,12 +129,12 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                                         disabled={checkpoint.isLocked}
                                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${task.completed
                                             ? "bg-green-500 border-green-500"
-                                            : "border-gray-300 hover:border-gray-400"
+                                            : "border-[#C09B6E] hover:border-[#D4AF37]"
                                             } ${checkpoint.isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
                                     >
                                         {task.completed && <Check className="h-3 w-3 text-white" />}
                                     </button>
-                                    <span className={`text-gray-800 ${task.completed ? "line-through text-gray-400" : ""}`}>
+                                    <span className={`text-[#F4E4BC] ${task.completed ? "line-through text-[#C09B6E]" : ""}`}>
                                         {task.text}
                                     </span>
                                 </motion.div>
@@ -146,9 +145,9 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border-2 border-blue-200"
+                                    className="flex items-center gap-3 p-4 bg-[#7A2840]/50 rounded-2xl border-2 border-[#D4AF37]/50"
                                 >
-                                    <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0" />
+                                    <div className="w-5 h-5 rounded-full border-2 border-[#C09B6E] flex-shrink-0" />
                                     <input
                                         type="text"
                                         value={newTask}
@@ -156,11 +155,11 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                                         onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
                                         placeholder="Enter your goal..."
                                         autoFocus
-                                        className="flex-1 bg-transparent outline-none text-gray-800 placeholder:text-gray-400"
+                                        className="flex-1 bg-transparent outline-none text-[#F4E4BC] placeholder:text-[#C09B6E]/50"
                                     />
                                     <button
                                         onClick={handleAddTask}
-                                        className="text-blue-600 font-semibold text-sm hover:text-blue-700"
+                                        className="text-[#D4AF37] font-semibold text-sm hover:text-[#F4E4BC]"
                                     >
                                         Add
                                     </button>
@@ -168,7 +167,7 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                             ) : !checkpoint.isLocked && (
                                 <button
                                     onClick={() => setIsAddingTask(true)}
-                                    className="flex items-center gap-3 p-4 w-full text-left text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-2xl border border-dashed border-gray-200 transition-colors"
+                                    className="flex items-center gap-3 p-4 w-full text-left text-[#C09B6E] hover:text-[#D4AF37] hover:bg-[#7A2840]/30 rounded-2xl border border-dashed border-[#7A2840] transition-colors"
                                 >
                                     <Plus className="h-5 w-5" />
                                     <span>Add a new goal...</span>
@@ -178,7 +177,7 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
 
                         {/* Locked State or Submit Button */}
                         {checkpoint.isLocked ? (
-                            <div className="flex items-center justify-center gap-3 py-4 bg-gray-100 rounded-2xl text-gray-500">
+                            <div className="flex items-center justify-center gap-3 py-4 bg-[#7A2840]/50 rounded-2xl text-[#C09B6E]">
                                 <Lock className="h-5 w-5" />
                                 <span className="font-semibold uppercase tracking-wider text-sm">
                                     Checkpoint Locked
@@ -189,7 +188,7 @@ export default function CheckpointModal({ isOpen, onClose, checkpoint, tasks, on
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={handleSubmit}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-colors shadow-lg"
+                                className="w-full bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015] font-bold py-4 rounded-2xl transition-colors shadow-lg"
                             >
                                 Submit Tasks
                             </motion.button>
