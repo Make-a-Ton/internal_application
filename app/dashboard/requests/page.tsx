@@ -1,53 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, Bell, Plus } from "lucide-react";
 import Link from "next/link";
 import BottomNav from "../../components/BottomNav";
 import GetHelpModal from "../../components/GetHelpModal";
-
-interface HelpRequest {
-    id: string;
-    category: string;
-    urgency: string;
-    message: string;
-    status: "pending" | "in-progress" | "done";
-    timestamp: string;
-}
+import { useAppState } from "../../context/AppContext";
 
 export default function RequestsPage() {
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
-    const [requests, setRequests] = useState<HelpRequest[]>([]);
+    const { requests, addRequest, teams } = useAppState();
+    const [teamId, setTeamId] = useState("");
+
+    useEffect(() => {
+        const storedTeamId = localStorage.getItem("makeaton_team_id") || "";
+        // Fallback: use first team from DB for demo if no team ID stored
+        setTeamId(storedTeamId || (teams.length > 0 ? teams[0].id : ""));
+    }, [teams]);
 
     const handleNewRequest = (request: { category: string; urgency: string; description: string }) => {
-        const newRequest: HelpRequest = {
-            id: Date.now().toString(),
+        addRequest({
+            teamId,
             category: request.category,
-            urgency: request.urgency,
+            urgency: request.urgency === "critical" ? "critical" : "normal",
             message: request.description || `[${request.urgency.toUpperCase()}] ${request.category} request`,
-            status: "pending",
-            timestamp: new Date().toLocaleString("en-US", {
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-            }).toUpperCase(),
-        };
-        setRequests(prev => [newRequest, ...prev]);
+            description: request.description,
+        });
     };
 
-    const getStatusColor = (status: HelpRequest["status"]) => {
+    const getStatusColor = (status: string) => {
         switch (status) {
-            case "done":
-                return "bg-green-500";
-            case "in-progress":
-                return "bg-yellow-500";
-            case "pending":
-                return "bg-blue-500";
-            default:
-                return "bg-gray-500";
+            case "done": return "bg-green-500";
+            case "in-progress": return "bg-yellow-500";
+            case "pending": return "bg-blue-500";
+            default: return "bg-gray-500";
         }
     };
 
@@ -115,16 +102,10 @@ export default function RequestsPage() {
                                     {request.status.replace("-", " ")}
                                 </span>
                             </div>
-
                             {/* Message */}
-                            <p className="font-semibold text-gray-900 mb-1">
-                                {request.message}
-                            </p>
-
+                            <p className="font-semibold text-gray-900 mb-1">{request.message}</p>
                             {/* Timestamp */}
-                            <p className="text-xs text-gray-400">
-                                {request.timestamp}
-                            </p>
+                            <p className="text-xs text-gray-400">{request.timestamp}</p>
                         </motion.div>
                     ))
                 )}

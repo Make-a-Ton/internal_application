@@ -3,69 +3,23 @@
 import { useState } from "react";
 import { Bell, UserCircle } from "lucide-react";
 import Link from "next/link";
-import NotificationsModal, { Notification } from "./NotificationsModal";
-
-// Sample notifications - will be replaced with data from admin dashboard later
-const sampleNotifications: Notification[] = [
-    {
-        id: "1",
-        title: "PPT Template",
-        url: "https://tinyurl.com/bh07-ppt",
-        timestamp: "9 days ago",
-        priority: "high",
-    },
-    {
-        id: "2",
-        title: "Checkpoint 3 (final) will begin on 11:30PM.",
-        description: "Teams should update the review status for Checkpoint 2 in Checkpoint 3, include any...",
-        timestamp: "9 days ago",
-        priority: "high",
-    },
-    {
-        id: "3",
-        title: "Tea and Snacks available at the food counter",
-        description: "Participants may go and have them.",
-        timestamp: "9 days ago",
-    },
-    {
-        id: "4",
-        title: "Inventory Items Added!!",
-        description: "Participants can order items from the inventory until 5:00 PM, after which the...",
-        timestamp: "9 days ago",
-    },
-    {
-        id: "5",
-        title: "Food inventory is open till 5:00PM",
-        description: "Participants can order snacks & drinks via platform until 5:00PM",
-        timestamp: "9 days ago",
-    },
-    {
-        id: "6",
-        title: "Checkpoint 3 will be happening on 6:00PM",
-        description: "Participants should update the review, extra and plan of checkpoint 2.",
-        timestamp: "9 days ago",
-        priority: "high",
-    },
-    {
-        id: "7",
-        title: "Lunch Active!",
-        description: "Lunch is being provided near the stage.",
-        timestamp: "9 days ago",
-        priority: "high",
-    },
-    {
-        id: "8",
-        title: "Take a break, enjoy games.",
-        description: "Small gaming session arranged infront of gate, you guys can come and enjoy!!",
-        timestamp: "9 days ago",
-    },
-];
+import NotificationsModal from "./NotificationsModal";
+import { useAppState } from "../context/AppContext";
 
 export default function DashboardHeader() {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const { notifications } = useAppState();
 
-    // For now using sample data - will be empty initially in production
-    const [notifications] = useState<Notification[]>([]);
+    // Map AppNotification to the format NotificationsModal expects
+    const modalNotifications = notifications.map(n => ({
+        id: n.id,
+        title: n.title,
+        description: n.description,
+        url: n.url,
+        timestamp: n.timestamp,
+        priority: n.priority as "high" | "normal" | undefined,
+        read: n.read,
+    }));
 
     return (
         <>
@@ -96,7 +50,7 @@ export default function DashboardHeader() {
             <NotificationsModal
                 isOpen={isNotificationsOpen}
                 onClose={() => setIsNotificationsOpen(false)}
-                notifications={notifications}
+                notifications={modalNotifications}
             />
         </>
     );

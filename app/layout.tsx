@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Playwrite_NZ } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+import ClientLayout from "./ClientLayout";
 
-const playwriteNZ = Playwrite_NZ({
-  variable: "--font-playwrite-nz",
-  weight: "400",
+const coolvetica = localFont({
+  src: "./fonts/CoolveticaRg.otf",
+  variable: "--font-coolvetica",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -20,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playwriteNZ.variable} antialiased`}
+        className={`${coolvetica.variable} antialiased`}
       >
-        {children}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
 }
+
+

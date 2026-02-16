@@ -1,0 +1,101 @@
+﻿node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be 
+correct.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Users\alisa\AppData\
+Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ΓÜá War   
+ ning: Ne...not b    
+e correct.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ We detected 
+multiple lockfiles 
+and selected the 
+directory of C:\Users
+\alisa\package-lock.j
+son as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs
+.org/docs/app/api-ref
+erence/config/next-co
+nfig-js/turbopack#roo
+t-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * C:\Users\alisa\O
+neDrive\Desktop\makea
+ton\internal_applicat
+ion\package-lock.json
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 3.4s
+  Running TypeScript ...
+Failed to compile.
+
+./app/admin/leaderboa
+rd/page.tsx:9:25
+Type error: Expected 
+2 arguments, but got 
+1.
+
+[0m [90m  7 |[39m 
+[36mexport[39m 
+[36mdefault[39m 
+[36mfunction[39m [
+33mAdminLeaderboardPa
+ge[39m() {
+ [90m  8 |[39m     
+[36mconst[39m { 
+scores[33m,[39m 
+judges } [33m=[39m 
+useAppState()[33m;[
+39m
+[31m[1m>[22m[39m
+[90m  9 |[39m     
+[36mconst[39m 
+leaderboard 
+[33m=[39m computeLe
+aderboard(scores)[33
+m;[39m
+ [90m    |[39m     
+                    
+[31m[1m^[22m[39m
+ [90m 10 |[39m
+ [90m 11 |[39m     
+[36mreturn[39m (
+ [90m 12 |[39m     
+    [33m<[39m[33md
+iv[39m className[33
+m=[39m[32m"min-h-sc
+reen p-8"[39m[33m>
+[39m[0m
+Next.js build worker 
+exited with code: 1 
+and signal: null

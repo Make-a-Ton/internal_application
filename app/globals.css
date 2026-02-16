@@ -34,7 +34,7 @@
 body {
   background-color: var(--color-burgundy);
   color: var(--color-gold-light);
-  font-family: var(--font-playwrite-nz), Arial, Helvetica, sans-serif;
+  font-family: var(--font-coolvetica), Arial, Helvetica, sans-serif;
 }
 
 .bg-grid-pattern {
