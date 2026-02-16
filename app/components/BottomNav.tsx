@@ -16,7 +16,7 @@ export default function BottomNav() {
     const pathname = usePathname();
 
     return (
-        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900 rounded-full px-2 py-2 flex items-center gap-1 shadow-2xl border border-gray-700">
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#3A0015] rounded-full px-2 py-2 flex items-center gap-1 shadow-2xl border border-[#7A2840]">
             {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -24,8 +24,8 @@ export default function BottomNav() {
                         key={item.href}
                         href={item.href}
                         className={`p-3 rounded-full transition-all duration-200 ${isActive
-                            ? "bg-blue-500 text-white shadow-lg"
-                            : "text-gray-400 hover:text-white hover:bg-gray-700"
+                            ? "bg-[#D4AF37] text-[#3A0015] shadow-lg"
+                            : "text-[#C09B6E] hover:text-[#F4E4BC] hover:bg-[#7A2840]"
                             }`}
                         title={item.label}
                     >

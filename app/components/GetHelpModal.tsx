@@ -48,17 +48,17 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.95 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl p-6 pb-10 max-h-[90vh] overflow-y-auto"
+                        className="fixed bottom-0 left-0 right-0 z-50 bg-[#5C0124] rounded-t-3xl p-6 pb-10 max-h-[90vh] overflow-y-auto"
                     >
                         {/* Handle */}
-                        <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4" />
+                        <div className="w-12 h-1.5 bg-[#7A2840] rounded-full mx-auto mb-4" />
 
                         {/* Header */}
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-extrabold text-gray-900">Get Help</h2>
+                            <h2 className="text-2xl font-extrabold text-[#F4E4BC]">Get Help</h2>
                             <button
                                 onClick={onClose}
-                                className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                                className="p-2 text-[#C09B6E] hover:text-[#F4E4BC] hover:bg-[#7A2840] rounded-full transition-colors"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -66,7 +66,7 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
 
                         {/* Category */}
                         <div className="mb-6">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">
+                            <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest text-center mb-4">
                                 Category
                             </p>
                             <div className="grid grid-cols-2 gap-3">
@@ -75,8 +75,8 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
                                         key={category}
                                         onClick={() => setSelectedCategory(category)}
                                         className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-200 ${selectedCategory === category
-                                            ? "bg-burgundy text-gold-light shadow-lg"
-                                            : "bg-white border border-gray-200 text-gray-700 hover:border-burgundy/50"
+                                            ? "bg-[#D4AF37] text-[#3A0015] shadow-lg"
+                                            : "bg-[#7A2840]/50 border border-[#7A2840] text-[#C09B6E] hover:border-[#D4AF37]/50"
                                             }`}
                                     >
                                         {category}
@@ -87,7 +87,7 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
 
                         {/* Urgency Level */}
                         <div className="mb-6">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">
+                            <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest text-center mb-4">
                                 Urgency Level
                             </p>
                             <div className="grid grid-cols-2 gap-3">
@@ -97,9 +97,9 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
                                         onClick={() => setSelectedUrgency(level.label)}
                                         className={`py-3 px-4 rounded-xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selectedUrgency === level.label
                                             ? level.color === "green"
-                                                ? "bg-green-50 border-2 border-green-500 text-green-700"
-                                                : "bg-red-50 border-2 border-red-500 text-red-700"
-                                            : "bg-white border border-gray-200 text-gray-700 hover:border-gray-400"
+                                                ? "bg-green-900/50 border-2 border-green-500 text-green-400"
+                                                : "bg-red-900/50 border-2 border-red-500 text-red-400"
+                                            : "bg-[#7A2840]/50 border border-[#7A2840] text-[#C09B6E] hover:border-[#D4AF37]/50"
                                             }`}
                                     >
                                         <span
@@ -118,9 +118,9 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Describe your issue in detail..."
-                                className="w-full h-32 p-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-burgundy/50 focus:border-transparent resize-none"
+                                className="w-full h-32 p-4 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-[#F4E4BC] placeholder:text-[#C09B6E]/50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent resize-none"
                             />
-                            <p className="text-xs text-gray-400 text-right mt-1">OPTIONAL</p>
+                            <p className="text-xs text-[#C09B6E] text-right mt-1">OPTIONAL</p>
                         </div>
 
                         {/* Submit Button */}
@@ -128,7 +128,7 @@ export default function GetHelpModal({ isOpen, onClose, onSubmit }: GetHelpModal
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={handleSubmit}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors shadow-lg"
+                            className="w-full bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015] font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors shadow-lg"
                         >
                             Send Request
                             <ArrowRight className="h-5 w-5" />

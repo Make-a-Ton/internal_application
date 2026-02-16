@@ -60,11 +60,9 @@ function ScoringContent() {
         // Find next unscored team
         const currentIndex = assignedTeams.findIndex(t => t.id === selectedTeamId);
         const scoredTeamIds = scores.filter(s => s.judgeId === judgeId).map(s => s.teamId);
-        // Add current team since we just scored it
         scoredTeamIds.push(selectedTeamId);
 
         let nextTeam = null;
-        // Look for next unscored team after current
         for (let i = 1; i <= assignedTeams.length; i++) {
             const idx = (currentIndex + i) % assignedTeams.length;
             if (!scoredTeamIds.includes(assignedTeams[idx].id)) {
@@ -100,26 +98,26 @@ function ScoringContent() {
                             initial={{ scale: 0.5, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.5, opacity: 0 }}
-                            className="bg-white rounded-3xl p-10 text-center shadow-2xl max-w-md mx-4"
+                            className="bg-[#5C0124] rounded-3xl p-10 text-center shadow-2xl max-w-md mx-4 border border-[#7A2840]"
                         >
                             <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                             >
-                                <CheckCircle2 className="h-20 w-20 text-green-500 mx-auto mb-4" />
+                                <CheckCircle2 className="h-20 w-20 text-green-400 mx-auto mb-4" />
                             </motion.div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2">Score Submitted!</h2>
-                            <p className="text-gray-500 mb-1">
-                                <span className="font-bold text-[#5C0124]">{selectedTeam?.name}</span> scored {total}/{maxTotal}
+                            <h2 className="text-2xl font-bold text-[#F4E4BC] mb-2">Score Submitted!</h2>
+                            <p className="text-[#C09B6E] mb-1">
+                                <span className="font-bold text-[#D4AF37]">{selectedTeam?.name}</span> scored {total}/{maxTotal}
                             </p>
                             {nextTeamName ? (
-                                <p className="text-sm text-gray-400 flex items-center justify-center gap-1 mt-3">
-                                    Moving to <span className="font-bold text-gray-600">{nextTeamName}</span>
+                                <p className="text-sm text-[#C09B6E] flex items-center justify-center gap-1 mt-3">
+                                    Moving to <span className="font-bold text-[#F4E4BC]">{nextTeamName}</span>
                                     <ArrowRight className="h-3.5 w-3.5" />
                                 </p>
                             ) : (
-                                <p className="text-sm text-green-600 font-bold mt-3">🎉 All teams scored!</p>
+                                <p className="text-sm text-green-400 font-bold mt-3">🎉 All teams scored!</p>
                             )}
                         </motion.div>
                     </motion.div>
@@ -128,17 +126,17 @@ function ScoringContent() {
 
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#5C0124]">Scoring</h1>
-                <p className="text-gray-500 mt-1">Rate teams on each criterion using the sliders</p>
+                <h1 className="text-3xl font-bold text-[#D4AF37]">Scoring</h1>
+                <p className="text-[#C09B6E] mt-1">Rate teams on each criterion using the sliders</p>
             </div>
 
             {/* Team Selector */}
             <div className="mb-8">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Select Team</label>
+                <label className="block text-sm font-bold text-[#D4AF37] mb-2">Select Team</label>
                 <select
                     value={selectedTeamId}
                     onChange={(e) => setSelectedTeamId(e.target.value)}
-                    className="w-full max-w-md px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#5C0124] text-gray-900"
+                    className="w-full max-w-md px-4 py-3 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D4AF37] text-[#F4E4BC]"
                 >
                     <option value="">Choose a team...</option>
                     {assignedTeams.map(t => {
@@ -165,14 +163,14 @@ function ScoringContent() {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}
-                                    className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm"
+                                    className="bg-[#7A2840]/50 rounded-2xl p-5 border border-[#7A2840]"
                                 >
                                     <div className="flex items-center justify-between mb-1">
                                         <div>
-                                            <h3 className="font-bold text-gray-900">{criteria.label}</h3>
-                                            <p className="text-xs text-gray-400">{criteria.description}</p>
+                                            <h3 className="font-bold text-[#F4E4BC]">{criteria.label}</h3>
+                                            <p className="text-xs text-[#C09B6E]">{criteria.description}</p>
                                         </div>
-                                        <span className={`text-2xl font-bold ${value >= 8 ? "text-green-600" : value >= 5 ? "text-[#D4AF37]" : "text-red-500"
+                                        <span className={`text-2xl font-bold ${value >= 8 ? "text-green-400" : value >= 5 ? "text-[#D4AF37]" : "text-red-400"
                                             }`}>
                                             {value}
                                         </span>
@@ -184,9 +182,9 @@ function ScoringContent() {
                                         step={1}
                                         value={value}
                                         onChange={(e) => setCurrentScores(prev => ({ ...prev, [key]: Number(e.target.value) }))}
-                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#5C0124]"
+                                        className="w-full h-2 bg-[#5C0124] rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
                                     />
-                                    <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+                                    <div className="flex justify-between text-[10px] text-[#C09B6E] mt-1">
                                         <span>0</span>
                                         <span>5</span>
                                         <span>10</span>
@@ -201,27 +199,27 @@ function ScoringContent() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-8"
+                            className="bg-[#7A2840]/50 rounded-2xl p-6 border border-[#7A2840] sticky top-8"
                         >
-                            <h3 className="font-bold text-gray-900 mb-4">{selectedTeam.name}</h3>
-                            <p className="text-xs text-gray-400 mb-4">{selectedTeam.code} · {selectedTeam.college} · {selectedTeam.category}</p>
+                            <h3 className="font-bold text-[#F4E4BC] mb-4">{selectedTeam.name}</h3>
+                            <p className="text-xs text-[#C09B6E] mb-4">{selectedTeam.code} · {selectedTeam.college} · {selectedTeam.category}</p>
 
                             {/* Score Breakdown */}
                             <div className="space-y-2 mb-6">
                                 {SCORING_CRITERIA.map(c => (
                                     <div key={c.key} className="flex justify-between text-sm">
-                                        <span className="text-gray-500">{c.label}</span>
-                                        <span className="font-bold text-gray-900">{currentScores[c.key as ScoreKey]}</span>
+                                        <span className="text-[#C09B6E]">{c.label}</span>
+                                        <span className="font-bold text-[#F4E4BC]">{currentScores[c.key as ScoreKey]}</span>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="border-t border-gray-100 pt-4 mb-6">
+                            <div className="border-t border-[#7A2840] pt-4 mb-6">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold text-gray-900">Total</span>
-                                    <span className="text-3xl font-bold text-[#5C0124]">{total}<span className="text-sm text-gray-400">/{maxTotal}</span></span>
+                                    <span className="text-lg font-bold text-[#F4E4BC]">Total</span>
+                                    <span className="text-3xl font-bold text-[#D4AF37]">{total}<span className="text-sm text-[#C09B6E]">/{maxTotal}</span></span>
                                 </div>
-                                <div className="mt-3 h-3 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="mt-3 h-3 bg-[#5C0124] rounded-full overflow-hidden">
                                     <motion.div
                                         className="h-full bg-gradient-to-r from-[#5C0124] to-[#D4AF37] rounded-full"
                                         initial={{ width: 0 }}
@@ -234,7 +232,7 @@ function ScoringContent() {
                             <button
                                 onClick={handleSubmit}
                                 disabled={showDone}
-                                className="w-full font-bold py-4 rounded-xl transition-colors text-sm bg-[#5C0124] hover:bg-[#7A2840] text-[#F4E4BC] disabled:opacity-50"
+                                className="w-full font-bold py-4 rounded-xl transition-colors text-sm bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015] disabled:opacity-50"
                             >
                                 Submit Score
                             </button>
@@ -248,7 +246,7 @@ function ScoringContent() {
 
 export default function ScoringPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen p-8"><p className="text-gray-400">Loading...</p></div>}>
+        <Suspense fallback={<div className="min-h-screen p-8"><p className="text-[#C09B6E]">Loading...</p></div>}>
             <ScoringContent />
         </Suspense>
     );
