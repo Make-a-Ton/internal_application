@@ -156,24 +156,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const fetchData = async () => {
         // 1. Teams & Members
-        const { data: teamsData, error: teamsError } = await supabase.from('teams').select('*');
+        const { data: teamsData, error: teamsError } = await supabase.from('team').select('*');
         if (teamsError) console.error("Error fetching teams:", teamsError);
-        const { data: membersData, error: membersError } = await supabase.from('team_members').select('*');
+        const { data: membersData, error: membersError } = await supabase.from('member').select('*');
         if (membersError) console.error("Error fetching members:", membersError);
 
         if (teamsData) {
             const formattedTeams: TeamInfo[] = teamsData.map(t => ({
                 id: t.id,
                 name: t.name,
-                code: t.code,
+                code: String(t.password || ''),
                 college: t.college || 'Unknown',
-                category: t.category,
-                projectStatus: t.project_status as any,
+                category: t.track || 'general',
+                projectStatus: (t.problem_stat ? 'submitted' : 'pending') as any,
                 members: membersData?.filter(m => m.team_id === t.id).map(m => ({
                     name: m.name,
-                    role: m.role,
-                    isCheckedIn: m.is_checked_in,
-                    food_pref: m.food_pref
+                    role: 'HACKER',
+                    isCheckedIn: m.checkin ?? false,
+                    food_pref: m.food
                 })) || []
             }));
             setTeams(formattedTeams);
@@ -222,12 +222,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
 
         // 5. Help Requests (Joined with Teams for name)
-        const { data: reqData, error: reqError } = await supabase.from('help_requests').select('*, teams(name)').order('created_at', { ascending: false });
+        const { data: reqData, error: reqError } = await supabase.from('help_requests').select('*, team(name)').order('created_at', { ascending: false });
         if (reqError) console.error("Error fetching requests:", reqError);
         if (reqData) {
             setRequests(reqData.map(r => ({
                 id: r.id,
-                team: (r.teams as any)?.name || "Unknown Team",
+                team: (r.team as any)?.name || "Unknown Team",
                 teamId: r.team_id,
                 category: r.category,
                 urgency: r.urgency as any,
