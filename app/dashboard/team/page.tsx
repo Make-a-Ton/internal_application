@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BottomNav from "../../components/BottomNav";
 import { supabase } from "../../../lib/supabase";
+import { useAuth } from "../../context/AuthContext";
 
 interface TeamData {
     id: string;
@@ -26,6 +27,7 @@ interface MemberData {
 
 export default function TeamPage() {
     const router = useRouter();
+    const { team: authTeam, logout } = useAuth();
     const [team, setTeam] = useState<TeamData | null>(null);
     const [members, setMembers] = useState<MemberData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -33,14 +35,16 @@ export default function TeamPage() {
 
     useEffect(() => {
         async function fetchData() {
+            if (!authTeam) return;
+
             setLoading(true);
             setError(null);
 
-            // Fetch the first team
+            // Fetch the authenticated team's data
             const { data: teamData, error: teamError } = await supabase
                 .from("team")
                 .select("*")
-                .limit(1)
+                .eq("id", authTeam.id)
                 .single();
 
             if (teamError) {
@@ -56,7 +60,7 @@ export default function TeamPage() {
             const { data: memberData, error: memberError } = await supabase
                 .from("member")
                 .select("*")
-                .eq("team_id", teamData.id);
+                .eq("team_id", authTeam.id);
 
             if (memberError) {
                 setError("Failed to load member data.");
@@ -70,9 +74,10 @@ export default function TeamPage() {
         }
 
         fetchData();
-    }, []);
+    }, [authTeam]);
 
     const handleLogout = () => {
+        logout();
         router.push("/");
     };
 
@@ -156,7 +161,7 @@ export default function TeamPage() {
                 {/* Category Badge */}
                 <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#5C0124] text-[#C09B6E] text-xs font-bold rounded-full uppercase tracking-wider border border-[#7A2840]">
                     <span className="w-1.5 h-1.5 bg-[#D4AF37] rounded-full" />
-                    {teamCategory}
+                    {team?.track ?? "GENERAL"}
                 </span>
             </motion.section>
 
@@ -191,7 +196,7 @@ export default function TeamPage() {
             >
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Team</h2>
-                    <span className="text-xs text-[#C09B6E]">{teamMembers.length}</span>
+                    <span className="text-xs text-[#C09B6E]">{members.length}</span>
                 </div>
 
                 <div className="space-y-3">
@@ -213,9 +218,9 @@ export default function TeamPage() {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs font-semibold text-[#C09B6E] uppercase">
-                                            {member.role}
+                                            HACKER
                                         </span>
-                                        {member.isCheckedIn && (
+                                        {member.checkin && (
                                             <span className="px-2 py-0.5 bg-green-900/30 text-green-400 text-xs font-bold rounded-full">
                                                 CHECKED IN
                                             </span>

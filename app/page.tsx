@@ -5,39 +5,50 @@ import { useRouter } from "next/navigation";
 import { User, ArrowUpRight, Settings, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "./components/LoadingScreen";
+import { useAuth } from "./context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [pin, setPin] = useState(["", "", "", ""]);
+  const [teamName, setTeamName] = useState("");
+  const [error, setError] = useState("");
   const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Handle form submission (no auth for testing)
-  const handleLogin = () => {
+  // Handle form submission
+  const handleLogin = async () => {
+    setError("");
     setIsLoading(true);
     const enteredPin = pin.join("");
 
-    // Judge PINs
-    const judgePins: { [key: string]: string } = {
-      "1001": "judge-1",
-      "1002": "judge-2",
-      "1003": "judge-3",
-    };
-
-    let destination = "/dashboard";
-    if (enteredPin === "0000") {
-      destination = "/admin";
-    } else if (judgePins[enteredPin]) {
-      destination = "/judge";
-      if (typeof window !== "undefined") {
-        localStorage.setItem("makeaton_judge_id", judgePins[enteredPin]);
-      }
+    if (enteredPin.length !== 4) {
+      setError("Please enter a 4-digit PIN");
+      setIsLoading(false);
+      return;
     }
 
-    setTimeout(() => {
-      router.push(destination);
-    }, 2500);
+    // Admin PIN
+    if (enteredPin === "0000") {
+      setTimeout(() => router.push("/admin"), 2500);
+      return;
+    }
+
+    // Team login via Supabase
+    if (!teamName.trim()) {
+      setError("Please enter your team name");
+      setIsLoading(false);
+      return;
+    }
+
+    const result = await login(teamName.trim(), enteredPin);
+    if (result.success) {
+      setTimeout(() => router.push("/dashboard"), 2500);
+    } else {
+      setError(result.error || "Invalid credentials");
+      setIsLoading(false);
+    }
   };
 
   // Handle PIN input changes
@@ -141,8 +152,9 @@ export default function LoginPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Enter your username"
-                  defaultValue="Team Make-A-Ton"
+                  placeholder="Enter your team name"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
                   className="w-full bg-black/20 border border-gold-dark/20 text-gold-light rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-gold-medium/50 focus:border-transparent transition-all placeholder:text-gold-dark/40 font-semibold text-lg"
                 />
               </div>
@@ -199,6 +211,20 @@ export default function LoginPage() {
                 <ArrowUpRight className="h-6 w-6 stroke-[3]" />
               </div>
             </motion.button>
+
+            {/* Error Message */}
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-red-400 text-sm text-center font-semibold"
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 
