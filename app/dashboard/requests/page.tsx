@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, Bell, Plus } from "lucide-react";
 import Link from "next/link";
-import BottomNav from "../../components/BottomNav";
+
 import GetHelpModal from "../../components/GetHelpModal";
 import { useAppState } from "../../context/AppContext";
 
@@ -39,28 +39,28 @@ export default function RequestsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#5C0124] pb-24">
+        <div className="min-h-screen bg-transparent pb-24">
             {/* Header */}
-            <header className="sticky top-0 z-30 bg-[#5C0124] border-b border-[#7A2840]">
+            <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-[#7A2840]/20">
                 <div className="flex items-center justify-between px-4 py-4">
                     <div className="flex items-center gap-3">
                         <Link
                             href="/dashboard"
-                            className="p-2 -ml-2 hover:bg-[#7A2840] rounded-full transition-colors"
+                            className="p-2 -ml-2 hover:bg-[#7A2840]/10 rounded-full transition-colors"
                         >
-                            <ChevronLeft className="h-6 w-6 text-[#D4AF37]" />
+                            <ChevronLeft className="h-6 w-6 text-[#5C0124]" />
                         </Link>
                         <div>
-                            <h1 className="text-xl font-extrabold text-[#F4E4BC]">Requests</h1>
-                            <p className="text-xs text-[#C09B6E] uppercase tracking-widest">Track Your Help & Orders</p>
+                            <h1 className="text-xl font-extrabold text-[#5C0124]">Requests</h1>
+                            <p className="text-xs text-[#8B6F4E] uppercase tracking-widest">Track Your Help & Orders</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-[#7A2840] rounded-full transition-colors">
-                            <Bell className="h-5 w-5 text-[#C09B6E]" />
+                        <button className="p-2 hover:bg-[#7A2840]/10 rounded-full transition-colors">
+                            <Bell className="h-5 w-5 text-[#8B6F4E]" />
                         </button>
-                        <div className="w-9 h-9 bg-[#7A2840] rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-[#D4AF37]">TR</span>
+                        <div className="w-9 h-9 bg-[#5C0124] rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-[#E7BB88]">TR</span>
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@ export default function RequestsPage() {
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
                     onClick={() => setIsHelpModalOpen(true)}
-                    className="w-full bg-[#D4AF37] hover:bg-[#C09B6E] text-[#3A0015] font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
+                    className="w-full bg-[#5C0124] hover:bg-[#7A2840] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
                 >
                     <Plus className="h-5 w-5" />
                     New Request
@@ -83,8 +83,8 @@ export default function RequestsPage() {
             <div className="px-4 py-6 space-y-4">
                 {requests.length === 0 ? (
                     <div className="text-center py-12">
-                        <p className="text-[#C09B6E] text-sm">No requests yet</p>
-                        <p className="text-[#C09B6E]/50 text-xs mt-1">Tap &quot;New Request&quot; to get help</p>
+                        <p className="text-[#3A0015]/60 text-sm">No requests yet</p>
+                        <p className="text-[#3A0015]/40 text-xs mt-1">Tap &quot;New Request&quot; to get help</p>
                     </div>
                 ) : (
                     requests.map((request, index) => (
@@ -93,19 +93,20 @@ export default function RequestsPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="bg-[#7A2840]/50 rounded-xl p-4 border border-[#7A2840]"
+
+                            className="bg-white/60 backdrop-blur-md rounded-xl p-4 border border-[#5C0124]/10 shadow-sm"
                         >
                             {/* Status Badge */}
                             <div className="flex items-center gap-2 mb-2">
                                 <span className={`w-2 h-2 rounded-full ${getStatusColor(request.status)}`} />
-                                <span className="text-xs font-bold uppercase tracking-wider text-[#D4AF37]">
+                                <span className="text-xs font-bold uppercase tracking-wider text-[#5C0124]">
                                     {request.status.replace("-", " ")}
                                 </span>
                             </div>
                             {/* Message */}
-                            <p className="font-semibold text-[#F4E4BC] mb-1">{request.message}</p>
+                            <p className="font-semibold text-[#3A0015] mb-1">{request.message}</p>
                             {/* Timestamp */}
-                            <p className="text-xs text-[#C09B6E]">{request.timestamp}</p>
+                            <p className="text-xs text-[#3A0015]/60">{request.timestamp}</p>
                         </motion.div>
                     ))
                 )}
@@ -118,7 +119,7 @@ export default function RequestsPage() {
                 onSubmit={handleNewRequest}
             />
 
-            <BottomNav />
+
         </div>
     );
 }

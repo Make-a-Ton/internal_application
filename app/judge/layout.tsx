@@ -5,13 +5,24 @@ import JudgeGuard from "../components/JudgeGuard";
 
 export default function JudgeLayout({ children }: { children: React.ReactNode }) {
     return (
-        <JudgeGuard>
-            <div className="min-h-screen bg-[#5C0124] text-[#F4E4BC]" style={{ fontFamily: "var(--font-coolvetica), sans-serif" }}>
-                <JudgeSidebar />
-                <main className="ml-64">
+        <div className="min-h-screen bg-[#5C0124] text-[#F4E4BC]">
+            <JudgeSidebar />
+            <main className="ml-64 bg-white text-[#3A0015] min-h-screen relative overflow-hidden">
+                {/* Full-size pattern background */}
+                <div
+                    className="fixed inset-0 ml-64 pointer-events-none z-0"
+                    style={{
+                        backgroundImage: "url('/pattern.svg')",
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center",
+                        backgroundSize: "cover",
+                        opacity: 0.04,
+                    }}
+                />
+                <div className="relative z-10">
                     {children}
-                </main>
-            </div>
-        </JudgeGuard>
+                </div>
+            </main>
+        </div>
     );
 }

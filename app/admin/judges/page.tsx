@@ -12,8 +12,8 @@ export default function AdminJudgesPage() {
     return (
         <div className="min-h-screen p-8">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#D4AF37]">Judges</h1>
-                <p className="text-[#C09B6E] mt-1">Manage judges and assign teams for judging</p>
+                <h1 className="text-3xl font-bold text-[#5C0124]">Judges</h1>
+                <p className="text-[#8B6F4E] mt-1">Manage judges and assign teams for judging</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -38,8 +38,8 @@ export default function AdminJudgesPage() {
                                         {judge.name.split(" ").pop()}
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-[#F4E4BC]">{judge.name}</h3>
-                                        <p className="text-xs text-[#C09B6E]">PIN: {judge.pin}</p>
+                                        <h3 className="font-bold text-[#3A0015]">{judge.name}</h3>
+                                        <p className="text-xs text-[#3A0015]/60">PIN: {judge.pin}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-3 text-xs">
@@ -54,23 +54,23 @@ export default function AdminJudgesPage() {
 
                             {/* Assigned Teams */}
                             <div className="p-4">
-                                <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider mb-3">Assigned Teams</p>
+                                <p className="text-xs font-bold text-[#5C0124] uppercase tracking-wider mb-3">Assigned Teams</p>
                                 {assignedTeams.length === 0 ? (
-                                    <p className="text-sm text-[#C09B6E] text-center py-4">No teams assigned</p>
+                                    <p className="text-sm text-[#3A0015]/50 text-center py-4">No teams assigned</p>
                                 ) : (
                                     <div className="space-y-2">
                                         {assignedTeams.map(team => (
                                             <div key={team.id} className="flex items-center justify-between py-2 px-3 bg-[#5C0124]/50 rounded-lg">
                                                 <div className="flex items-center gap-2">
-                                                    <Users className="h-3.5 w-3.5 text-[#C09B6E]" />
+                                                    <Users className="h-3.5 w-3.5 text-[#3A0015]/50" />
                                                     <div>
-                                                        <span className="text-sm font-medium text-[#F4E4BC]">{team.name}</span>
-                                                        <p className="text-xs text-[#C09B6E]">{team.college}</p>
+                                                        <span className="text-sm font-medium text-[#3A0015]">{team.name}</span>
+                                                        <p className="text-xs text-[#3A0015]/60">{team.college}</p>
                                                     </div>
                                                 </div>
                                                 <button
                                                     onClick={() => unassignTeamFromJudge(judge.id, team.id)}
-                                                    className="p-1 text-[#C09B6E] hover:text-red-400 transition-colors"
+                                                    className="p-1 text-[#3A0015]/40 hover:text-red-500 transition-colors"
                                                 >
                                                     <X className="h-3.5 w-3.5" />
                                                 </button>
@@ -84,7 +84,7 @@ export default function AdminJudgesPage() {
                             <div className="px-4 pb-4">
                                 <button
                                     onClick={() => setSelectedJudge(isExpanded ? null : judge.id)}
-                                    className="w-full text-sm font-bold text-[#D4AF37] hover:bg-[#5C0124]/50 py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                    className="w-full text-sm font-bold text-[#5C0124] hover:bg-[#5C0124]/10 py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
                                 >
                                     <Plus className="h-4 w-4" />
                                     Assign Team
@@ -104,8 +104,8 @@ export default function AdminJudgesPage() {
                                                 }}
                                                 className="w-full flex items-center justify-between py-2 px-3 hover:bg-[#5C0124]/50 rounded-lg transition-colors text-left"
                                             >
-                                                <span className="text-sm text-[#F4E4BC]">{team.name} <span className="text-xs text-[#C09B6E]">· {team.college}</span></span>
-                                                <UserCheck className="h-4 w-4 text-[#D4AF37]" />
+                                                <span className="text-sm text-[#3A0015]">{team.name} <span className="text-xs text-[#3A0015]/60">· {team.college}</span></span>
+                                                <UserCheck className="h-4 w-4 text-[#5C0124]" />
                                             </button>
                                         ))}
                                     </motion.div>

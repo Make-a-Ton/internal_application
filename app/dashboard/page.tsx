@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import DashboardHeader from "../components/DashboardHeader";
-import BottomNav from "../components/BottomNav";
 import GetHelpModal from "../components/GetHelpModal";
 import { useAppState } from "../context/AppContext";
 
@@ -20,22 +19,7 @@ export default function DashboardPage() {
     const recentRequests = requests.slice(0, 2);
 
     return (
-        <div className="min-h-screen bg-[#5C0124] font-sans pb-24 relative overflow-hidden">
-            {/* Rotating gear background decorations */}
-            <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                className="fixed top-[-15%] right-[-10%] text-[#D4AF37]/5 pointer-events-none z-0"
-            >
-                <Settings size={500} />
-            </motion.div>
-            <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-                className="fixed bottom-[-15%] left-[-10%] text-[#D4AF37]/5 pointer-events-none z-0"
-            >
-                <Settings size={400} />
-            </motion.div>
+        <div className="min-h-screen bg-transparent font-sans pb-24 relative overflow-hidden">
 
             <div className="relative z-10">
                 <DashboardHeader />
@@ -84,10 +68,10 @@ export default function DashboardPage() {
                     className="mx-4 mt-6"
                 >
                     <div className="flex justify-between items-center mb-3">
-                        <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider">Announcements</h2>
-                        <button className="text-sm text-[#D4AF37] font-semibold hover:underline">View All</button>
+                        <h2 className="text-sm font-bold text-[#5C0124] uppercase tracking-wider">Announcements</h2>
+                        <button className="text-sm text-[#5C0124] font-semibold hover:underline">View All</button>
                     </div>
-                    <div className="bg-[#7A2840]/50 rounded-xl p-6 border border-white/15 shadow-sm text-center text-[#C09B6E]">
+                    <div className="bg-[#7A2840]/50 rounded-xl p-6 border border-[#7A2840] shadow-sm text-center text-[#3A0015]/60">
                         <Bell className="mx-auto h-10 w-10 mb-2 opacity-30" />
                         <p className="text-sm">No new announcements</p>
                         <p className="text-xs opacity-50">Stay tuned for updates</p>
@@ -124,17 +108,17 @@ export default function DashboardPage() {
                     transition={{ delay: 0.4 }}
                     className="mx-4 mt-6"
                 >
-                    <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider mb-3">Services</h2>
+                    <h2 className="text-sm font-bold text-[#5C0124] uppercase tracking-wider mb-3">Services</h2>
                     <button
                         onClick={() => setIsHelpModalOpen(true)}
-                        className="w-full bg-[#7A2840]/50 p-5 rounded-xl border border-white/15 shadow-sm hover:bg-[#7A2840]/70 hover:shadow-md transition-all text-left cursor-pointer flex items-center gap-4"
+                        className="w-full bg-[#7A2840]/50 p-5 rounded-xl border border-[#7A2840] shadow-sm hover:bg-[#7A2840]/70 hover:shadow-md transition-all text-left cursor-pointer flex items-center gap-4"
                     >
                         <div className="bg-[#5C0124] p-3 rounded-lg">
                             <Zap className="h-6 w-6 text-[#D4AF37]" />
                         </div>
                         <div>
-                            <p className="font-bold text-[#F4E4BC] text-lg">Technical Support</p>
-                            <p className="text-xs text-[#C09B6E]">Get help from mentors & volunteers</p>
+                            <p className="font-bold text-[#3A0015] text-lg">Technical Support</p>
+                            <p className="text-xs text-[#3A0015]/60">Get help from mentors & volunteers</p>
                         </div>
                     </button>
                 </motion.section>
@@ -146,7 +130,7 @@ export default function DashboardPage() {
                     className="mx-4 mt-6"
                 >
                     <Link href="/dashboard/submit">
-                        <div className="bg-[#E7BB88] text-[#5C0023] p-5 rounded-2xl flex items-center justify-between shadow-lg hover:shadow-xl transition-shadow cursor-pointer border border-white/15">
+                        <div className="bg-[#E7BB88] text-[#5C0023] p-5 rounded-2xl flex items-center justify-between shadow-lg hover:shadow-xl transition-shadow cursor-pointer border border-[#D4AF37]">
                             <div>
                                 <p className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1">
                                     <span className="h-2 w-2 bg-[#5C0023] rounded-full animate-pulse"></span> Action Required
@@ -170,13 +154,13 @@ export default function DashboardPage() {
                 >
                     <Link
                         href="/dashboard/checkpoints"
-                        className="bg-[#7A2840]/50 rounded-xl p-5 border border-white/15 shadow-sm flex items-center justify-between hover:bg-[#7A2840]/70 hover:shadow-md transition-all cursor-pointer"
+                        className="bg-[#7A2840]/50 rounded-xl p-5 border border-[#7A2840] shadow-sm flex items-center justify-between hover:bg-[#7A2840]/70 hover:shadow-md transition-all cursor-pointer"
                     >
                         <div>
-                            <h3 className="font-bold text-[#F4E4BC]">Checkpoints</h3>
-                            <p className="text-xs text-[#C09B6E]">Track your progress milestones</p>
+                            <h3 className="font-bold text-[#3A0015]">Checkpoints</h3>
+                            <p className="text-xs text-[#3A0015]/60">Track your progress milestones</p>
                         </div>
-                        <Clock className="h-5 w-5 text-[#C09B6E]" />
+                        <Clock className="h-5 w-5 text-[#3A0015]/50" />
                     </Link>
                 </motion.section>
 
@@ -187,11 +171,11 @@ export default function DashboardPage() {
                     transition={{ delay: 0.7 }}
                     className="mx-4 mt-6 mb-10"
                 >
-                    <h2 className="text-sm font-bold text-[#D4AF37] uppercase tracking-wider mb-3">Recent Requests</h2>
+                    <h2 className="text-sm font-bold text-[#5C0124] uppercase tracking-wider mb-3">Recent Requests</h2>
                     <div className="space-y-3">
                         {recentRequests.length > 0 ? (
                             recentRequests.map((req) => (
-                                <div key={req.id} className="bg-[#7A2840]/50 rounded-xl p-4 border border-white/15 shadow-sm flex items-start gap-3">
+                                <div key={req.id} className="bg-[#7A2840]/50 rounded-xl p-4 border border-[#7A2840] shadow-sm flex items-start gap-3">
                                     {req.status === "done" ? (
                                         <CheckCircle2 className="h-5 w-5 text-[#E7BB88] mt-0.5 flex-shrink-0" />
                                     ) : req.status === "in-progress" ? (
@@ -201,30 +185,29 @@ export default function DashboardPage() {
                                     )}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-0.5">
-                                            <p className="font-semibold text-[#E7BB88]">{req.category}</p>
+                                            <p className="font-semibold text-[#3A0015]">{req.category}</p>
                                             <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${req.status === "done"
-                                                    ? "bg-[#E7BB88]/20 text-[#E7BB88]"
-                                                    : req.status === "in-progress"
-                                                        ? "bg-[#D4AF37]/20 text-[#D4AF37]"
-                                                        : "bg-[#C09B6E]/20 text-[#C09B6E]"
+                                                ? "bg-[#E7BB88]/20 text-[#E7BB88]"
+                                                : req.status === "in-progress"
+                                                    ? "bg-[#D4AF37]/20 text-[#D4AF37]"
+                                                    : "bg-[#C09B6E]/20 text-[#C09B6E]"
                                                 }`}>
                                                 {req.status}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-[#F4E4BC] truncate">{req.message}</p>
+                                        <p className="text-sm text-[#3A0015]/80 truncate">{req.message}</p>
                                     </div>
-                                    <span className="text-xs text-[#C09B6E] whitespace-nowrap">{req.timestamp}</span>
+                                    <span className="text-xs text-[#3A0015]/50 whitespace-nowrap">{req.timestamp}</span>
                                 </div>
                             ))
                         ) : (
-                            <div className="bg-[#7A2840]/50 rounded-xl p-4 border border-white/15 text-center">
-                                <p className="text-sm text-[#C09B6E]">No requests yet. Use Technical Support to get help!</p>
+                            <div className="bg-[#7A2840]/50 rounded-xl p-4 border border-[#7A2840] text-center">
+                                <p className="text-sm text-[#3A0015]/60">No requests yet. Use Technical Support to get help!</p>
                             </div>
                         )}
                     </div>
                 </motion.section>
 
-                <BottomNav />
             </div>
         </div>
     );
