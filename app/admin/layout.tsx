@@ -9,6 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className="min-h-screen bg-[#5C0124] text-[#F4E4BC]">
+<<<<<<< HEAD
             <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             {/* Mobile Header with Hamburger */}
@@ -24,6 +25,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             <main className="md:ml-64">
                 {children}
+=======
+            <AdminSidebar />
+            <main className="ml-64 bg-white text-[#3A0015] min-h-screen relative overflow-hidden">
+                {/* Full-size pattern background */}
+                <div
+                    className="fixed inset-0 ml-64 pointer-events-none z-0"
+                    style={{
+                        backgroundImage: "url('/pattern.svg')",
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center",
+                        backgroundSize: "cover",
+                        opacity: 0.04,
+                    }}
+                />
+                <div className="relative z-10">
+                    {children}
+                </div>
+>>>>>>> 8ecad10e2e391633f892280c07f95fce430c9bf8
             </main>
         </div>
     );

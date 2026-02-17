@@ -12,8 +12,8 @@ export default function AdminCheckpointsPage() {
     return (
         <div className="min-h-screen p-4 md:p-8">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#D4AF37]">Checkpoints</h1>
-                <p className="text-[#C09B6E] mt-1">Manage checkpoint releases and view team submissions</p>
+                <h1 className="text-3xl font-bold text-[#5C0124]">Checkpoints</h1>
+                <p className="text-[#8B6F4E] mt-1">Manage checkpoint releases and view team submissions</p>
             </div>
 
             <div className="space-y-6">
@@ -37,7 +37,7 @@ export default function AdminCheckpointsPage() {
                                 <div className="flex items-center gap-4">
                                     <button
                                         onClick={() => setExpandedCheckpoint(expandedCheckpoint === checkpoint.id ? null : checkpoint.id)}
-                                        className="p-1 text-[#C09B6E] hover:text-[#D4AF37]"
+                                        className="p-1 text-[#3A0015]/50 hover:text-[#5C0124]"
                                     >
                                         {expandedCheckpoint === checkpoint.id ? (
                                             <ChevronUp className="h-5 w-5" />
@@ -50,13 +50,13 @@ export default function AdminCheckpointsPage() {
                                             <span className="px-3 py-1 bg-[#D4AF37] text-[#3A0015] text-xs font-bold rounded-full">
                                                 CP {checkpoint.number}
                                             </span>
-                                            <h3 className="text-lg font-bold text-[#F4E4BC]">{checkpoint.title}</h3>
+                                            <h3 className="text-lg font-bold text-[#3A0015]">{checkpoint.title}</h3>
                                         </div>
                                         <div className="flex items-center gap-3 mt-1">
                                             {checkpoint.releasedAt && (
-                                                <p className="text-xs text-[#C09B6E]">Released: {checkpoint.releasedAt}</p>
+                                                <p className="text-xs text-[#3A0015]/60">Released: {checkpoint.releasedAt}</p>
                                             )}
-                                            <p className="text-xs text-[#C09B6E]">
+                                            <p className="text-xs text-[#3A0015]/60">
                                                 {teamsWithTasks.length} team(s) · {totalTasks} tasks submitted
                                             </p>
                                         </div>
@@ -85,23 +85,23 @@ export default function AdminCheckpointsPage() {
                                     className="border-t border-[#7A2840]"
                                 >
                                     {teamsWithTasks.length === 0 ? (
-                                        <div className="p-8 text-center text-[#C09B6E] text-sm">
+                                        <div className="p-8 text-center text-[#3A0015]/50 text-sm">
                                             No tasks submitted yet for this checkpoint
                                         </div>
                                     ) : (
                                         <div className="p-6 space-y-5">
                                             {teamsWithTasks.map(({ team, tasks }) => (
                                                 <div key={team.id}>
-                                                    <h4 className="font-bold text-[#F4E4BC] mb-2 text-sm">{team.name} ({team.code})</h4>
+                                                    <h4 className="font-bold text-[#3A0015] mb-2 text-sm">{team.name} ({team.code})</h4>
                                                     <div className="space-y-1.5 ml-2">
                                                         {tasks.map((task) => (
                                                             <div key={task.id} className="flex items-center gap-2">
                                                                 {task.completed ? (
-                                                                    <CheckCircle2 className="h-4 w-4 text-[#E7BB88]" />
+                                                                    <CheckCircle2 className="h-4 w-4 text-green-600" />
                                                                 ) : (
-                                                                    <Circle className="h-4 w-4 text-[#C09B6E]/50" />
+                                                                    <Circle className="h-4 w-4 text-[#3A0015]/30" />
                                                                 )}
-                                                                <span className={`text-sm ${task.completed ? "text-[#C09B6E] line-through" : "text-[#F4E4BC]"}`}>
+                                                                <span className={`text-sm ${task.completed ? "text-[#3A0015]/50 line-through" : "text-[#3A0015]"}`}>
                                                                     {task.text}
                                                                 </span>
                                                             </div>

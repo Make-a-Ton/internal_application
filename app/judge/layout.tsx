@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import JudgeSidebar from "./components/JudgeSidebar";
 import JudgeGuard from "../components/JudgeGuard";
+import { div } from "framer-motion/client";
 
 export default function JudgeLayout({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);

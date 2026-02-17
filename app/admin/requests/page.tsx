@@ -34,8 +34,8 @@ export default function AdminRequestsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37]">Requests</h1>
-                    <p className="text-[#C09B6E] mt-1">Manage help requests from teams ({requests.length} total)</p>
+                    <h1 className="text-3xl font-bold text-[#5C0124]">Requests</h1>
+                    <p className="text-[#8B6F4E] mt-1">Manage help requests from teams ({requests.length} total)</p>
                 </div>
             </div>
 
@@ -48,13 +48,13 @@ export default function AdminRequestsPage() {
                         placeholder="Search requests..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#F4E4BC] placeholder:text-[#C09B6E]/50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#3A0015] placeholder:text-[#3A0015]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
                     />
                 </div>
                 <select
                     value={filterUrgency}
                     onChange={(e) => setFilterUrgency(e.target.value as "all" | "critical" | "normal")}
-                    className="px-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#F4E4BC] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                    className="px-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#3A0015] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
                 >
                     <option value="all">All Urgencies</option>
                     <option value="critical">Critical</option>
@@ -63,7 +63,7 @@ export default function AdminRequestsPage() {
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value as "all" | HelpRequest["status"])}
-                    className="px-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#F4E4BC] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                    className="px-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#3A0015] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
                 >
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
@@ -83,7 +83,7 @@ export default function AdminRequestsPage() {
                 </div>
 
                 {filteredRequests.length === 0 ? (
-                    <div className="p-8 text-center text-[#C09B6E] text-sm">
+                    <div className="p-8 text-center text-[#3A0015]/50 text-sm">
                         {requests.length === 0 ? "No requests submitted yet" : "No matching requests"}
                     </div>
                 ) : (
@@ -97,12 +97,12 @@ export default function AdminRequestsPage() {
                         >
                             <span className="flex items-center gap-2">
                                 {getStatusIcon(req.status)}
-                                <span className="text-xs font-semibold text-[#C09B6E] capitalize">
+                                <span className="text-xs font-semibold text-[#3A0015]/70 capitalize">
                                     {req.status.replace("-", " ")}
                                 </span>
                             </span>
-                            <span className="font-medium text-[#F4E4BC] text-sm">{req.team}</span>
-                            <span className="col-span-2 text-sm text-[#C09B6E] truncate">{req.message}</span>
+                            <span className="font-medium text-[#3A0015] text-sm">{req.team}</span>
+                            <span className="col-span-2 text-sm text-[#3A0015]/70 truncate">{req.message}</span>
                             <span>
                                 <span className={`px-2 py-1 text-xs font-bold rounded-full ${req.urgency === "critical"
                                     ? "bg-red-900/30 text-red-400"

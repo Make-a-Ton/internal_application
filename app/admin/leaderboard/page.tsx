@@ -11,15 +11,15 @@ export default function AdminLeaderboardPage() {
     return (
         <div className="min-h-screen p-4 md:p-8">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#D4AF37]">Leaderboard</h1>
-                <p className="text-[#C09B6E] mt-1">Overall team rankings from all judges</p>
+                <h1 className="text-3xl font-bold text-[#5C0124]">Leaderboard</h1>
+                <p className="text-[#8B6F4E] mt-1">Overall team rankings from all judges</p>
             </div>
 
             {leaderboard.length === 0 ? (
                 <div className="bg-[#7A2840]/50 rounded-2xl border border-[#7A2840] p-12 text-center">
                     <Trophy className="h-16 w-16 text-[#7A2840] mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-[#C09B6E]">No Scores Yet</h3>
-                    <p className="text-sm text-[#C09B6E]/60 mt-1">Scores will appear here once judges start scoring.</p>
+                    <h3 className="text-lg font-bold text-[#5C0124]">No Scores Yet</h3>
+                    <p className="text-sm text-[#3A0015]/50 mt-1">Scores will appear here once judges start scoring.</p>
                 </div>
             ) : (
                 <div className="bg-[#7A2840]/30 rounded-2xl border border-[#7A2840] overflow-hidden">
@@ -45,14 +45,14 @@ export default function AdminLeaderboardPage() {
                                 style={{ gridTemplateColumns: `60px 1fr repeat(${judges.length}, 100px) 100px 80px` }}
                             >
                                 <span className="text-2xl">{medal}</span>
-                                <span className="font-bold text-[#F4E4BC]">{entry.teamName}</span>
+                                <span className="font-bold text-[#3A0015]">{entry.teamName}</span>
                                 {judges.map(j => (
-                                    <span key={j.id} className="text-sm font-medium text-[#C09B6E]">
+                                    <span key={j.id} className="text-sm font-medium text-[#3A0015]/70">
                                         {entry.breakdown[j.id] !== undefined ? entry.breakdown[j.id] : "—"}
                                     </span>
                                 ))}
-                                <span className="text-lg font-bold text-[#D4AF37]">{entry.avgScore.toFixed(1)}</span>
-                                <span className="text-sm text-[#C09B6E]">{entry.judgeCount}/{judges.length}</span>
+                                <span className="text-lg font-bold text-[#5C0124]">{entry.avgScore.toFixed(1)}</span>
+                                <span className="text-sm text-[#3A0015]/60">{entry.judgeCount}/{judges.length}</span>
                             </motion.div>
                         );
                     })}

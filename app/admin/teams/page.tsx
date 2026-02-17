@@ -25,8 +25,8 @@ export default function AdminTeamsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-[#D4AF37]">Teams</h1>
-                    <p className="text-[#C09B6E] mt-1">{teams.length} registered teams</p>
+                    <h1 className="text-3xl font-extrabold text-[#5C0124]">Teams</h1>
+                    <p className="text-[#8B6F4E] mt-1">{teams.length} registered teams</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="relative">
@@ -36,7 +36,7 @@ export default function AdminTeamsPage() {
                             placeholder="Search teams, colleges..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 pr-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#F4E4BC] placeholder:text-[#C09B6E]/50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
+                            className="pl-10 pr-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#3A0015] placeholder:text-[#3A0015]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                         />
                     </div>
                 </div>
@@ -67,22 +67,22 @@ export default function AdminTeamsPage() {
                             onClick={() => toggleTeam(team.id)}
                             className="grid grid-cols-6 gap-4 px-6 py-4 w-full text-left hover:bg-[#7A2840]/50 transition-colors border-b border-[#7A2840]/30"
                         >
-                            <span className="font-semibold text-[#F4E4BC] flex items-center gap-2">
+                            <span className="font-semibold text-[#3A0015] flex items-center gap-2">
                                 {expandedTeam === team.id ? (
-                                    <ChevronUp className="h-4 w-4 text-[#C09B6E]" />
+                                    <ChevronUp className="h-4 w-4 text-[#3A0015]/50" />
                                 ) : (
-                                    <ChevronDown className="h-4 w-4 text-[#C09B6E]" />
+                                    <ChevronDown className="h-4 w-4 text-[#3A0015]/50" />
                                 )}
                                 {team.name}
                             </span>
-                            <span className="text-[#C09B6E] font-mono text-sm">{team.code}</span>
-                            <span className="text-[#C09B6E] text-sm truncate" title={team.college}>{team.college}</span>
+                            <span className="text-[#3A0015]/70 font-mono text-sm">{team.code}</span>
+                            <span className="text-[#3A0015]/70 text-sm truncate" title={team.college}>{team.college}</span>
                             <span>
                                 <span className="px-2 py-1 bg-[#5C0124] text-[#C09B6E] text-xs font-semibold rounded-full">
                                     {team.category}
                                 </span>
                             </span>
-                            <span className="flex items-center gap-1 text-[#C09B6E]">
+                            <span className="flex items-center gap-1 text-[#3A0015]/70">
                                 <Users className="h-4 w-4" /> {team.members.length}
                             </span>
                             <span>
@@ -111,11 +111,11 @@ export default function AdminTeamsPage() {
                                                     {member.name.split(" ").map(n => n[0]).join("")}
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium text-[#F4E4BC] text-sm">{member.name}</p>
-                                                    <p className="text-xs text-[#C09B6E]">{member.role}{member.food_pref ? ` · ${member.food_pref}` : ""}</p>
+                                                    <p className="font-medium text-[#3A0015] text-sm">{member.name}</p>
+                                                    <p className="text-xs text-[#3A0015]/60">{member.role}{member.food_pref ? ` · ${member.food_pref}` : ""}</p>
                                                 </div>
                                             </div>
-                                            <span className={`flex items-center gap-1 text-xs font-semibold ${member.isCheckedIn ? "text-[#E7BB88]" : "text-[#C09B6E]"
+                                            <span className={`flex items-center gap-1 text-xs font-semibold ${member.isCheckedIn ? "text-green-600" : "text-[#3A0015]/40"
                                                 }`}>
                                                 <CheckCircle2 className="h-3 w-3" />
                                                 {member.isCheckedIn ? "Checked In" : "Not Checked In"}
