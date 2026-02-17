@@ -103,6 +103,7 @@ create table help_requests (
   message text not null,
   description text,
   status text default 'pending' check (status in ('pending', 'in-progress', 'done')),
+  mentor_id uuid references public.mentor(id),
   created_at timestamptz default now()
 );
 
@@ -168,7 +169,17 @@ create table gallery_images (
 );
 
 -- =============================================
--- 12. ORDER ITEMS (Store)
+-- 12. MENTORS
+-- =============================================
+create table public.mentor (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  domain text,
+  created_at timestamptz default now()
+);
+
+-- =============================================
+-- 13. ORDER ITEMS (Store)
 -- =============================================
 create table order_items (
   id uuid primary key default gen_random_uuid(),
@@ -218,6 +229,7 @@ alter table gallery_images enable row level security;
 alter table order_items enable row level security;
 alter table orders enable row level security;
 alter table food_coupons enable row level security;
+alter table mentor enable row level security;
 
 -- PUBLIC READ ACCESS (Simplest for Hackathon context)
 create policy "Public Read Teams" on team for select using (true);
@@ -227,6 +239,13 @@ create policy "Public Read Tasks" on checkpoint_tasks for select using (true);
 create policy "Public Read Items" on order_items for select using (true);
 create policy "Public Read Notifications" on notifications for select using (true);
 create policy "Public Read Gallery" on gallery_images for select using (true);
+create policy "Public Read Mentors" on mentor for select using (true);
+create policy "Public Read Requests" on help_requests for select using (true);
+create policy "Public Read Judges" on judges for select using (true);
+create policy "Public Read Assignments" on judge_assignments for select using (true);
+create policy "Public Read Scores" on team_scores for select using (true);
+create policy "Public Read Orders" on orders for select using (true);
+create policy "Public Read Coupon Member" on food_coupons for select using (true);
 
 -- SECURE PIN CHECK FUNCTION
 create or replace function verify_pin(pin_input text)

@@ -28,6 +28,7 @@ export interface HelpRequest {
     message: string;
     description: string;
     status: "pending" | "in-progress" | "done";
+    mentorId?: string;
     timestamp: string;
 }
 
@@ -39,6 +40,12 @@ export interface AppNotification {
     priority: "high" | "normal";
     timestamp: string;
     read?: boolean; // Client-side only for now
+}
+
+export interface Mentor {
+    id: string;
+    name: string;
+    domain: string;
 }
 
 // ============== JUDGE TYPES ==============
@@ -127,14 +134,17 @@ interface AppState {
     checkpointTasks: { [key: string]: CheckpointTask[] };
     judges: Judge[];
     scores: TeamScore[];
+    mentors: Mentor[];
     toggleCheckpointLock: (id: number) => Promise<void>;
-    addRequest: (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string }) => Promise<void>;
+    addRequest: (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string; mentorId?: string }) => Promise<void>;
     updateRequestStatus: (id: string, status: HelpRequest["status"]) => Promise<void>;
     addNotification: (notif: Omit<AppNotification, "id" | "timestamp">) => Promise<void>;
     updateCheckpointTasks: (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => Promise<void>;
     assignTeamToJudge: (judgeId: string, teamId: string) => Promise<void>;
     unassignTeamFromJudge: (judgeId: string, teamId: string) => Promise<void>;
     submitScore: (score: Omit<TeamScore, "id" | "timestamp">) => Promise<void>;
+    addMentor: (mentor: Omit<Mentor, "id">) => Promise<void>;
+    deleteMentor: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppState | null>(null);
@@ -153,13 +163,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [checkpointTasks, setCheckpointTasks] = useState<{ [key: string]: CheckpointTask[] }>({});
     const [judges, setJudges] = useState<Judge[]>([]);
     const [scores, setScores] = useState<TeamScore[]>([]);
+    const [mentors, setMentors] = useState<Mentor[]>([]);
 
     const fetchData = async () => {
         // 1. Teams & Members
         const { data: teamsData, error: teamsError } = await supabase.from('team').select('*');
-        if (teamsError) console.error("Error fetching teams:", teamsError);
+        if (teamsError) console.error("Error fetching teams:", teamsError.message);
         const { data: membersData, error: membersError } = await supabase.from('member').select('*');
-        if (membersError) console.error("Error fetching members:", membersError);
+        if (membersError) console.error("Error fetching members:", membersError.message);
 
         if (teamsData) {
             const formattedTeams: TeamInfo[] = teamsData.map(t => ({
@@ -181,7 +192,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 2. Checkpoints
         const { data: cpData, error: cpError } = await supabase.from('checkpoints').select('*').order('number');
-        if (cpError) console.error("Error fetching checkpoints:", cpError);
+        if (cpError) console.error("Error fetching checkpoints:", cpError.message);
         if (cpData) {
             setCheckpoints(cpData.map(c => ({
                 id: c.id,
@@ -195,7 +206,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 3. Tasks
         const { data: tasksData, error: tasksError } = await supabase.from('checkpoint_tasks').select('*');
-        if (tasksError) console.error("Error fetching tasks:", tasksError);
+        if (tasksError) console.error("Error fetching tasks:", tasksError.message);
         if (tasksData) {
             const taskMap: { [key: string]: CheckpointTask[] } = {};
             tasksData.forEach(task => {
@@ -208,9 +219,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 4. Judges & Assignments
         const { data: judgesData, error: judgesError } = await supabase.from('judges').select('*');
-        if (judgesError) console.error("Error fetching judges:", judgesError);
+        if (judgesError) console.error("Error fetching judges:", judgesError.message);
         const { data: assignmentsData, error: assignmentsError } = await supabase.from('judge_assignments').select('*');
-        if (assignmentsError) console.error("Error fetching assignments:", assignmentsError);
+        if (assignmentsError) console.error("Error fetching assignments:", assignmentsError.message);
 
         if (judgesData) {
             setJudges(judgesData.map(j => ({
@@ -223,24 +234,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 5. Help Requests (Joined with Teams for name)
         const { data: reqData, error: reqError } = await supabase.from('help_requests').select('*, team(name)').order('created_at', { ascending: false });
-        if (reqError) console.error("Error fetching requests:", reqError);
+        if (reqError) console.error("Error fetching requests:", reqError.message);
         if (reqData) {
             setRequests(reqData.map(r => ({
                 id: r.id,
                 team: (r.team as any)?.name || "Unknown Team",
                 teamId: r.team_id,
                 category: r.category,
-                urgency: r.urgency as any,
+                urgency: r.urgency || "normal",
                 message: r.message,
-                description: r.description,
-                status: r.status as any,
-                timestamp: new Date(r.created_at).toLocaleString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true })
+                description: r.description || "",
+                status: r.status || "pending",
+                mentorId: r.mentor_id,
+                timestamp: new Date(r.created_at).toLocaleString()
             })));
         }
 
         // 6. Notifications
         const { data: notifData, error: notifError } = await supabase.from('notifications').select('*').order('created_at', { ascending: false });
-        if (notifError) console.error("Error fetching notifications:", notifError);
+        if (notifError) console.error("Error fetching notifications:", notifError.message);
         if (notifData) {
             setNotifications(notifData.map(n => ({
                 id: n.id,
@@ -254,7 +266,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 7. Scores
         const { data: scoresData, error: scoresError } = await supabase.from('team_scores').select('*');
-        if (scoresError) console.error("Error fetching scores:", scoresError);
+        if (scoresError) console.error("Error fetching scores:", scoresError.message);
         if (scoresData) {
             setScores(scoresData.map(s => ({
                 id: s.id,
@@ -270,6 +282,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 },
                 total: s.total,
                 timestamp: new Date(s.created_at).toLocaleString()
+            })));
+        }
+
+        // 8. Mentors
+        const { data: mentorData, error: mentorError } = await supabase.from('mentor').select('*');
+        if (mentorError) console.error("Error fetching mentors:", mentorError.message);
+        if (mentorData) {
+            setMentors(mentorData.map(m => ({
+                id: m.id || String(Math.random()),
+                name: m.name || "Unknown",
+                domain: m.domain || "N/A"
             })));
         }
     };
@@ -314,24 +337,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }, [checkpoints]);
 
     const addRequest = useCallback(async (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string }) => {
-        // If teamId not provided, we should probably fail or fetch from profile if using auth.
-        // Assuming teamId is passed or handled.
         if (!req.teamId) {
-            // Fallback for demo if teamId missing (e.g. from hardcoded components)
-            // We can fetch a default team for now or just log error.
             console.error("Missing teamId for help request");
+            alert("Error: Team ID not found. Please re-login.");
             return;
         }
 
-        await supabase.from('help_requests').insert({
-            team_id: req.teamId,
-            category: req.category,
-            urgency: req.urgency,
-            message: req.message,
-            description: req.description,
-            status: 'pending'
-        });
-    }, []);
+        try {
+            const { error } = await supabase.from('help_requests').insert({
+                team_id: req.teamId,
+                category: req.category,
+                urgency: req.urgency,
+                message: req.message,
+                description: req.description,
+                mentor_id: req.mentorId,
+                status: 'pending'
+            });
+
+            if (error) {
+                console.error("Supabase error adding request:", error);
+                alert(`Failed to send request: ${JSON.stringify(error, null, 2)}`);
+                throw error;
+            }
+
+            console.log("Help request added successfully");
+        } catch (err) {
+            console.error("Unexpected error in addRequest:", err);
+            alert(`An unexpected error occurred: ${err instanceof Error ? err.message : String(err)}`);
+        }
+    }, [supabase]);
 
     const updateRequestStatus = useCallback(async (id: string, status: HelpRequest["status"]) => {
         await supabase.from('help_requests').update({ status }).eq('id', id);
@@ -403,11 +437,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
         await supabase.from('team_scores').upsert(dbScore, { onConflict: 'judge_id,team_id' });
     }, []);
 
+    const addMentor = useCallback(async (mentor: Omit<Mentor, "id">) => {
+        await supabase.from('mentor').insert(mentor);
+        // fetchData will be triggered by subscription or we can update locally
+    }, []);
+
+    const deleteMentor = useCallback(async (id: string) => {
+        await supabase.from('mentor').delete().eq('id', id);
+        setMentors(prev => prev.filter(m => m.id !== id));
+    }, []);
+
     return (
         <AppContext.Provider value={{
-            teams, checkpoints, requests, notifications, checkpointTasks, judges, scores,
+            teams, checkpoints, requests, notifications, checkpointTasks, judges, scores, mentors,
             toggleCheckpointLock, addRequest, updateRequestStatus, addNotification,
             updateCheckpointTasks, assignTeamToJudge, unassignTeamFromJudge, submitScore,
+            addMentor, deleteMentor,
         }}>
             {children}
         </AppContext.Provider>

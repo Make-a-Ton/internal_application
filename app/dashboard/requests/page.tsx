@@ -7,25 +7,28 @@ import Link from "next/link";
 
 import GetHelpModal from "../../components/GetHelpModal";
 import { useAppState } from "../../context/AppContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function RequestsPage() {
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
-    const { requests, addRequest, teams } = useAppState();
-    const [teamId, setTeamId] = useState("");
+    const { requests, addRequest, mentors } = useAppState();
+    const { team } = useAuth();
 
-    useEffect(() => {
-        const storedTeamId = localStorage.getItem("makeaton_team_id") || "";
-        // Fallback: use first team from DB for demo if no team ID stored
-        setTeamId(storedTeamId || (teams.length > 0 ? teams[0].id : ""));
-    }, [teams]);
+    const handleNewRequest = (request: { category: string; urgency: string; description: string; mentorId?: string }) => {
+        const teamId = team?.id;
+        if (!teamId) return;
 
-    const handleNewRequest = (request: { category: string; urgency: string; description: string }) => {
+        const mentorName = request.mentorId ? mentors.find(m => m.id === request.mentorId)?.name : null;
+
         addRequest({
             teamId,
             category: request.category,
-            urgency: request.urgency === "critical" ? "critical" : "normal",
-            message: request.description || `[${request.urgency.toUpperCase()}] ${request.category} request`,
+            urgency: request.urgency.toLowerCase() === "critical" ? "critical" : "normal",
+            message: request.category === "Mentorship" && mentorName
+                ? mentorName
+                : (request.description || `[${request.urgency.toUpperCase()}] ${request.category} request`),
             description: request.description,
+            mentorId: request.mentorId,
         });
     };
 
@@ -104,7 +107,12 @@ export default function RequestsPage() {
                                 </span>
                             </div>
                             {/* Message */}
-                            <p className="font-semibold text-[#3A0015] mb-1">{request.message}</p>
+                            <p className="font-semibold text-[#3A0015] mb-1">
+                                {request.category === "Mentorship" && request.mentorId
+                                    ? `mentorship needed : ${request.message}`
+                                    : request.message
+                                }
+                            </p>
                             {/* Timestamp */}
                             <p className="text-xs text-[#3A0015]/60">{request.timestamp}</p>
                         </motion.div>

@@ -156,6 +156,7 @@ export default function LoginPage() {
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
                   className="w-full bg-black/20 border border-gold-dark/20 text-gold-light rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-gold-medium/50 focus:border-transparent transition-all placeholder:text-gold-dark/40 font-semibold text-lg"
+                  suppressHydrationWarning={true}
                 />
               </div>
             </motion.div>
@@ -205,6 +206,7 @@ export default function LoginPage() {
               onClick={handleLogin}
               disabled={isLoading}
               className="w-full bg-black hover:bg-black/90 text-gold-light font-bold py-3 pl-8 pr-2 rounded-full flex items-center justify-between transition-colors group mt-6 shadow-xl hover:shadow-gold-light/10 border border-gold-dark/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              suppressHydrationWarning={true}
             >
               <span className="text-xl tracking-wide">{isLoading ? "Loading..." : "Login"}</span>
               <div className="bg-gold-light text-burgundy rounded-full p-3 group-hover:rotate-45 transition-transform duration-300 shadow-lg">
