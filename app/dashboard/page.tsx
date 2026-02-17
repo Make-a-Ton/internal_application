@@ -10,10 +10,12 @@ import Link from "next/link";
 import DashboardHeader from "../components/DashboardHeader";
 import GetHelpModal from "../components/GetHelpModal";
 import { useAppState } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function DashboardPage() {
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
-    const { requests } = useAppState();
+    const { requests, addRequest } = useAppState();
+    const { team } = useAuth();
 
     // Get the 2 most recent requests (already sorted DESC by created_at from AppContext)
     const recentRequests = requests.slice(0, 2);
@@ -23,7 +25,21 @@ export default function DashboardPage() {
 
             <div className="relative z-10">
                 <DashboardHeader />
-                <GetHelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
+                <GetHelpModal
+                    isOpen={isHelpModalOpen}
+                    onClose={() => setIsHelpModalOpen(false)}
+                    onSubmit={async (data) => {
+                        if (team?.id) {
+                            await addRequest({
+                                teamId: team.id,
+                                category: data.category,
+                                urgency: data.urgency.toLowerCase() as any,
+                                message: data.description,
+                                description: data.description
+                            });
+                        }
+                    }}
+                />
 
                 {/* Hero Section */}
                 <motion.section

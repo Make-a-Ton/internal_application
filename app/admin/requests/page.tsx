@@ -8,7 +8,7 @@ import { useAppState, HelpRequest } from "../../context/AppContext";
 const statusOptions: HelpRequest["status"][] = ["pending", "in-progress", "done"];
 
 export default function AdminRequestsPage() {
-    const { requests, updateRequestStatus } = useAppState();
+    const { requests, updateRequestStatus, mentors } = useAppState();
     const [searchQuery, setSearchQuery] = useState("");
     const [filterUrgency, setFilterUrgency] = useState<"all" | "critical" | "normal">("all");
     const [filterStatus, setFilterStatus] = useState<"all" | HelpRequest["status"]>("all");
@@ -49,12 +49,14 @@ export default function AdminRequestsPage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#3A0015] placeholder:text-[#3A0015]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                        suppressHydrationWarning={true}
                     />
                 </div>
                 <select
                     value={filterUrgency}
                     onChange={(e) => setFilterUrgency(e.target.value as "all" | "critical" | "normal")}
                     className="px-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#3A0015] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                    suppressHydrationWarning={true}
                 >
                     <option value="all">All Urgencies</option>
                     <option value="critical">Critical</option>
@@ -64,6 +66,7 @@ export default function AdminRequestsPage() {
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value as "all" | HelpRequest["status"])}
                     className="px-4 py-2.5 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm text-[#3A0015] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                    suppressHydrationWarning={true}
                 >
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
@@ -102,13 +105,25 @@ export default function AdminRequestsPage() {
                                 </span>
                             </span>
                             <span className="font-medium text-[#3A0015] text-sm">{req.team}</span>
-                            <span className="col-span-2 text-sm text-[#3A0015]/70 truncate">{req.message}</span>
+                            <div className="col-span-2">
+                                <p className="text-sm font-bold text-[#5C0124]">
+                                    {req.category === "Mentorship" && req.mentorId
+                                        ? `mentorship needed: ${mentors.find(m => m.id === req.mentorId)?.name || req.mentorId}`
+                                        : req.message
+                                    }
+                                </p>
+                                {req.category === "Mentorship" && !req.mentorId && (
+                                    <p className="text-[10px] font-bold text-red-500 mt-0.5 uppercase tracking-tight">
+                                        mentor: name of mentor is required
+                                    </p>
+                                )}
+                            </div>
                             <span>
                                 <span className={`px-2 py-1 text-xs font-bold rounded-full ${req.urgency === "critical"
                                     ? "bg-red-900/30 text-red-400"
                                     : "bg-[#5C0124] text-[#C09B6E]"
                                     }`}>
-                                    {req.urgency.toUpperCase()}
+                                    {req.urgency?.toUpperCase() || "NORMAL"}
                                 </span>
                             </span>
                             <span>
@@ -116,6 +131,7 @@ export default function AdminRequestsPage() {
                                     value={req.status}
                                     onChange={(e) => updateRequestStatus(req.id, e.target.value as HelpRequest["status"])}
                                     className="px-3 py-1.5 bg-[#5C0124] border border-[#7A2840] rounded-lg text-xs font-medium text-[#F4E4BC] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                                    suppressHydrationWarning={true}
                                 >
                                     {statusOptions.map(s => (
                                         <option key={s} value={s}>{s.replace("-", " ").toUpperCase()}</option>

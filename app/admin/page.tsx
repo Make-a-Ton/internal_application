@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Users, Flag, MessageSquare, Bell, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { Users, Flag, MessageSquare, Bell, AlertCircle, CheckCircle2, Clock, Settings } from "lucide-react";
 import Link from "next/link";
 import { useAppState } from "../context/AppContext";
 
@@ -19,8 +19,7 @@ export default function AdminDashboard() {
     ];
 
     return (
-<<<<<<< HEAD
-        <div className="min-h-screen p-4 md:p-8 relative overflow-hidden">
+        <div className="min-h-screen relative overflow-hidden">
             {/* Rotating gear */}
             <motion.div
                 animate={{ rotate: 360 }}
@@ -29,9 +28,6 @@ export default function AdminDashboard() {
             >
                 <Settings size={400} />
             </motion.div>
-=======
-        <div className="min-h-screen p-8 relative overflow-hidden">
->>>>>>> 8ecad10e2e391633f892280c07f95fce430c9bf8
 
             <div className="relative z-10">
                 {/* Header */}

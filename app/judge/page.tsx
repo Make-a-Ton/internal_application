@@ -211,18 +211,12 @@ export default function JudgeHomePage() {
                                 <div className="p-6 border-b border-[#E8D5B8]">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="px-3 py-1 bg-[#D4AF37] text-[#3A0015] text-xs font-bold rounded-full uppercase">{team.track}</span>
-                                        <span className={`px-2 py-1 text-xs font-bold rounded-full ${projectStatus === "submitted" ? "bg-[#E7BB88]/20 text-[#E7BB88]" :
-                                            "bg-yellow-900/30 text-yellow-400"
-                                        <span className="px-3 py-1 bg-[#5C0124] text-[#F4E4BC] text-xs font-bold rounded-full">{team.code}</span>
-                                        <span className={`px-2 py-1 text-xs font-bold rounded-full ${team.projectStatus === "submitted" ? "bg-green-100 text-green-700" :
-                                            team.projectStatus === "in-progress" ? "bg-blue-100 text-blue-700" :
-                                                "bg-yellow-100 text-yellow-700"
-                                            }`}>
+                                        <span className={`px-2 py-1 text-xs font-bold rounded-full ${projectStatus === "submitted" ? "bg-[#E7BB88]/20 text-[#E7BB88]" : "bg-yellow-900/30 text-yellow-400"}`}>
                                             {projectStatus.toUpperCase()}
                                         </span>
                                     </div>
-                                    <h3 className="text-xl font-bold text-[#F4E4BC]">{team.name}</h3>
-                                    <p className="text-sm text-[#C09B6E] mt-1">{team.college} · {team.track} · {team.members.length} members</p>
+                                    <h3 className="text-xl font-bold text-[#5C0124]">{team.name}</h3>
+                                    <p className="text-sm text-[#8B6F4E] mt-1">{team.college} · {team.track} · {team.members.length} members</p>
                                 </div>
 
                                 {/* Members */}

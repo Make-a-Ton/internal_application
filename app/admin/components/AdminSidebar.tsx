@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Flag, MessageSquare, Bell, LogOut, Gavel, Trophy, X } from "lucide-react";
+import { LayoutDashboard, Users, Flag, MessageSquare, Bell, LogOut, Gavel, Trophy, X, GraduationCap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const sidebarItems = [
@@ -13,6 +13,7 @@ const sidebarItems = [
     { icon: Bell, href: "/admin/notifications", label: "Notifications" },
     { icon: Gavel, href: "/admin/judges", label: "Judges" },
     { icon: Trophy, href: "/admin/leaderboard", label: "Leaderboard" },
+    { icon: GraduationCap, href: "/admin/mentors", label: "Mentors" },
 ];
 
 interface AdminSidebarProps {
@@ -53,6 +54,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                     <button
                         onClick={onClose}
                         className="p-1 hover:bg-[#7A2840] rounded-lg transition-colors md:hidden"
+                        suppressHydrationWarning={true}
                     >
                         <X className="h-5 w-5 text-[#C09B6E]" />
                     </button>
@@ -85,6 +87,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                     <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-[#C09B6E] hover:text-red-300 hover:bg-[#7A2840]/50 rounded-lg transition-colors"
+                        suppressHydrationWarning={true}
                     >
                         <LogOut className="h-5 w-5" />
                         Logout
