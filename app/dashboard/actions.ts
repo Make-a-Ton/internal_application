@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 // Using a new client for server actions to ensure fresh state and proper environment variable usage
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!; // Using anon key as this is a public-ish action (authenticated via client context logic for now)
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!; // Using service role key to bypass RLS for server-side operations
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function submitProblemStatement(teamId: string, track: string, problemStatement: string, description: string) {
@@ -37,7 +37,7 @@ export async function submitProblemStatement(teamId: string, track: string, prob
 
     if (error) {
         console.error('Error updating problem statement:', error);
-        return { success: false, error: 'Failed to submit problem statement' };
+        return { success: false, error: error.message || 'Failed to submit problem statement' };
     }
 
     revalidatePath('/dashboard');

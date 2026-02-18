@@ -45,7 +45,7 @@ export default function ProblemStatementSelection({ teamId, onSuccess }: Problem
     const handleKireapSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const id = e.target.value;
         setSelectedKireapId(id);
-        const selected = kireapTracks.find(t => t.id === id.toString()); // Ensure ID comparison is correct (string vs number)
+        const selected = kireapTracks.find(t => String(t.id) === id);
         if (selected) {
             setProblemStatement(selected.statement);
             setDescription(selected.description);
@@ -73,7 +73,7 @@ export default function ProblemStatementSelection({ teamId, onSuccess }: Problem
         setError(null);
 
         try {
-            const result = await submitProblemStatement(teamId, track, problemStatement, description);
+            const result = await submitProblemStatement(teamId, track.toLowerCase(), problemStatement, description);
             if (result.success) {
                 onSuccess();
             } else {
