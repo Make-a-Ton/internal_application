@@ -1,30 +1,70 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Send, Bell } from "lucide-react";
-import { useAppState } from "../../context/AppContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { Send, Bell, Trash2, Pencil, X, Check } from "lucide-react";
+import { useAppState, AppNotification } from "../../context/AppContext";
 
 export default function AdminNotificationsPage() {
-    const { notifications, addNotification } = useAppState();
+    const { notifications, addNotification, deleteNotification, updateNotification } = useAppState();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [url, setUrl] = useState("");
     const [priority, setPriority] = useState<"high" | "normal">("normal");
     const [isSending, setIsSending] = useState(false);
 
-    const handleSend = () => {
+    // Edit state
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editTitle, setEditTitle] = useState("");
+    const [editDescription, setEditDescription] = useState("");
+    const [editUrl, setEditUrl] = useState("");
+    const [editPriority, setEditPriority] = useState<"high" | "normal">("normal");
+
+    // Delete confirmation
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+
+    const handleSend = async () => {
         if (!title.trim()) return;
         setIsSending(true);
+        await addNotification({
+            title: title.trim(),
+            description: description.trim() || undefined,
+            url: url.trim() || undefined,
+            priority,
+        });
+        setTitle("");
+        setDescription("");
+        setUrl("");
+        setPriority("normal");
+        setIsSending(false);
+    };
 
-        setTimeout(() => {
-            addNotification({ title: title.trim(), description: description.trim() || undefined, url: url.trim() || undefined, priority });
-            setTitle("");
-            setDescription("");
-            setUrl("");
-            setPriority("normal");
-            setIsSending(false);
-        }, 500);
+    const startEdit = (notif: AppNotification) => {
+        setEditingId(notif.id);
+        setEditTitle(notif.title);
+        setEditDescription(notif.description || "");
+        setEditUrl(notif.url || "");
+        setEditPriority(notif.priority);
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+    };
+
+    const saveEdit = async () => {
+        if (!editingId || !editTitle.trim()) return;
+        await updateNotification(editingId, {
+            title: editTitle.trim(),
+            description: editDescription.trim() || undefined,
+            url: editUrl.trim() || undefined,
+            priority: editPriority,
+        });
+        setEditingId(null);
+    };
+
+    const handleDelete = async (id: string) => {
+        await deleteNotification(id);
+        setDeletingId(null);
     };
 
     return (
@@ -127,22 +167,137 @@ export default function AdminNotificationsPage() {
                             <p className="text-sm text-[#3A0015]/50">No notifications sent yet</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-[#7A2840]/50 max-h-[500px] overflow-y-auto">
-                            {notifications.map((notif) => (
-                                <div key={notif.id} className="p-5">
-                                    <div className="flex items-start justify-between">
-                                        <h3 className="font-bold text-[#3A0015]">{notif.title}</h3>
-                                        {notif.priority === "high" && (
-                                            <span className="px-2 py-1 bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-bold rounded-full">
-                                                HIGH
-                                            </span>
+                        <div className="divide-y divide-[#7A2840]/50 max-h-[600px] overflow-y-auto">
+                            <AnimatePresence>
+                                {notifications.map((notif) => (
+                                    <motion.div
+                                        key={notif.id}
+                                        layout
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="p-5"
+                                    >
+                                        {editingId === notif.id ? (
+                                            /* Inline Edit Form */
+                                            <div className="space-y-3">
+                                                <input
+                                                    type="text"
+                                                    value={editTitle}
+                                                    onChange={(e) => setEditTitle(e.target.value)}
+                                                    className="w-full px-3 py-2 bg-[#5C0124] border border-[#7A2840] rounded-lg text-sm text-[#F4E4BC] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                                                    placeholder="Title"
+                                                />
+                                                <textarea
+                                                    value={editDescription}
+                                                    onChange={(e) => setEditDescription(e.target.value)}
+                                                    rows={2}
+                                                    className="w-full px-3 py-2 bg-[#5C0124] border border-[#7A2840] rounded-lg text-sm text-[#F4E4BC] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] resize-none"
+                                                    placeholder="Description"
+                                                />
+                                                <input
+                                                    type="url"
+                                                    value={editUrl}
+                                                    onChange={(e) => setEditUrl(e.target.value)}
+                                                    className="w-full px-3 py-2 bg-[#5C0124] border border-[#7A2840] rounded-lg text-sm text-[#F4E4BC] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                                                    placeholder="URL (optional)"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => setEditPriority("normal")}
+                                                        className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors ${editPriority === "normal"
+                                                            ? "bg-[#5C0124] text-[#F4E4BC] border border-[#D4AF37]"
+                                                            : "bg-[#5C0124]/50 text-[#C09B6E] border border-[#7A2840]"
+                                                            }`}
+                                                    >
+                                                        Normal
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setEditPriority("high")}
+                                                        className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors ${editPriority === "high"
+                                                            ? "bg-[#D4AF37] text-[#3A0015]"
+                                                            : "bg-[#5C0124]/50 text-[#C09B6E] border border-[#7A2840]"
+                                                            }`}
+                                                    >
+                                                        🔥 High
+                                                    </button>
+                                                </div>
+                                                <div className="flex gap-2 pt-1">
+                                                    <button
+                                                        onClick={saveEdit}
+                                                        disabled={!editTitle.trim()}
+                                                        className="flex-1 bg-[#D4AF37] hover:bg-[#C09B6E] disabled:opacity-50 text-[#3A0015] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 text-sm transition-colors"
+                                                    >
+                                                        <Check className="h-4 w-4" />
+                                                        Save
+                                                    </button>
+                                                    <button
+                                                        onClick={cancelEdit}
+                                                        className="flex-1 bg-[#5C0124]/50 hover:bg-[#5C0124]/70 text-[#C09B6E] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 text-sm transition-colors border border-[#7A2840]"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : deletingId === notif.id ? (
+                                            /* Delete Confirmation */
+                                            <div className="text-center py-2">
+                                                <p className="text-sm font-semibold text-[#3A0015] mb-3">Delete this notification?</p>
+                                                <div className="flex gap-2 justify-center">
+                                                    <button
+                                                        onClick={() => handleDelete(notif.id)}
+                                                        className="px-5 py-2 bg-red-900/50 hover:bg-red-900/70 text-red-300 font-bold rounded-lg text-sm transition-colors border border-red-900/50"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setDeletingId(null)}
+                                                        className="px-5 py-2 bg-[#5C0124]/50 hover:bg-[#5C0124]/70 text-[#C09B6E] font-bold rounded-lg text-sm transition-colors border border-[#7A2840]"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            /* Normal Display */
+                                            <div>
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <h3 className="font-bold text-[#3A0015]">{notif.title}</h3>
+                                                            {notif.priority === "high" && (
+                                                                <span className="px-2 py-0.5 bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-bold rounded-full flex-shrink-0">
+                                                                    HIGH
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        {notif.description && <p className="text-sm text-[#3A0015]/70 mt-1">{notif.description}</p>}
+                                                        {notif.url && <p className="text-sm text-[#5C0124] mt-1 truncate">{notif.url}</p>}
+                                                        <p className="text-xs text-[#3A0015]/40 mt-2">{notif.timestamp}</p>
+                                                    </div>
+                                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                                        <button
+                                                            onClick={() => startEdit(notif)}
+                                                            className="p-2 hover:bg-[#5C0124]/30 rounded-lg transition-colors"
+                                                            title="Edit"
+                                                        >
+                                                            <Pencil className="h-4 w-4 text-[#C09B6E]" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setDeletingId(notif.id)}
+                                                            className="p-2 hover:bg-red-900/30 rounded-lg transition-colors"
+                                                            title="Delete"
+                                                        >
+                                                            <Trash2 className="h-4 w-4 text-red-400/70" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         )}
-                                    </div>
-                                    {notif.description && <p className="text-sm text-[#3A0015]/70 mt-1">{notif.description}</p>}
-                                    {notif.url && <p className="text-sm text-[#5C0124] mt-1 truncate">{notif.url}</p>}
-                                    <p className="text-xs text-[#3A0015]/40 mt-2">{notif.timestamp}</p>
-                                </div>
-                            ))}
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
                         </div>
                     )}
                 </motion.div>

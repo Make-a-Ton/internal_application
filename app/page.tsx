@@ -174,6 +174,7 @@ export default function LoginPage() {
                 </label>
                 <button
                   type="button"
+                  suppressHydrationWarning={true}
                   onClick={() => setShowPin(!showPin)}
                   className="text-gold-medium hover:text-gold-light transition-colors p-1"
                 >
@@ -184,6 +185,7 @@ export default function LoginPage() {
                 {[0, 1, 2, 3].map((i) => (
                   <input
                     key={i}
+                    suppressHydrationWarning={true}
                     ref={(el) => { pinRefs.current[i] = el; }}
                     type={showPin ? "text" : "password"}
                     maxLength={1}
@@ -230,44 +232,7 @@ export default function LoginPage() {
           </div>
         </motion.div>
 
-        {/* Kerala Boat Animation (Right - Moving Up) */}
-        <motion.div
-          initial={{ y: "100%", opacity: 0, rotate: -90 }}
-          animate={{ y: "-100%", opacity: 1, rotate: -90 }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            repeatType: "loop",
-            ease: "linear"
-          }}
-          className="absolute top-0 right-[2%] md:right-[5%] w-[120px] md:w-[180px] h-auto pointer-events-none opacity-60 z-0"
-        >
-          <img
-            src="/kerala-boat.png"
-            alt="Kerala Boat Right"
-            className="w-full h-auto drop-shadow-2xl grayscale-[30%] sepia-[20%]"
-          />
-        </motion.div>
 
-        {/* Kerala Boat Animation (Left - Moving Down) */}
-        <motion.div
-          initial={{ y: "-100%", opacity: 0, rotate: 90 }}
-          animate={{ y: "100%", opacity: 1, rotate: 90 }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            repeatType: "loop",
-            ease: "linear",
-            delay: 2 // Offset start time slightly
-          }}
-          className="absolute top-0 left-[2%] md:left-[5%] w-[120px] md:w-[180px] h-auto pointer-events-none opacity-60 z-0"
-        >
-          <img
-            src="/kerala-boat.png"
-            alt="Kerala Boat Left"
-            className="w-full h-auto drop-shadow-2xl grayscale-[30%] sepia-[20%]"
-          />
-        </motion.div>
 
         {/* Footer / Copyright */}
         <motion.div
