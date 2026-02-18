@@ -10,6 +10,7 @@ import Link from "next/link";
 import DashboardHeader from "../components/DashboardHeader";
 import GetHelpModal from "../components/GetHelpModal";
 import ProblemStatementSelection from "./components/ProblemStatementSelection";
+import CountdownTimer from "./components/CountdownTimer";
 import { useAppState } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../../lib/supabase";
@@ -136,21 +137,16 @@ export default function DashboardPage() {
                         <Settings size={200} />
                     </motion.div>
 
-                    <span className="inline-block px-3 py-1 bg-[#E7BB88] text-[#5C0023] text-xs font-bold rounded-full mb-4">
-                        🎯 TEAM DASHBOARD
-                    </span>
+                    <CountdownTimer teamName={teamData?.name ?? "..."} />
 
-                    <p className="text-[#D4AF37] text-sm font-semibold tracking-widest mb-2">TEAM OVERVIEW</p>
-                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">{teamData?.name ?? "Loading..."}</h1>
-
-                    <div className="flex justify-between items-end">
+                    <div className="flex justify-between items-end mt-4 border-t border-white/10 pt-4">
                         <div>
-                            <p className="text-xs text-[#C09B6E] uppercase tracking-wider">Track</p>
-                            <p className="text-xl font-bold text-[#F4E4BC]">{teamData?.track || "General"}</p>
+                            <p className="text-[25px] text-[#C09B6E] uppercase tracking-wider">Track</p>
+                            <p className="text-[30px] font-bold text-[#F4E4BC]">{teamData?.track || "General"}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs text-[#C09B6E] uppercase tracking-wider">Members</p>
-                            <p className="text-xl font-bold text-[#F4E4BC]">{checkedInCount}/{members.length} <span className="text-[#D4AF37]">Checked In</span></p>
+                            <p className="text-[20px] text-[#C09B6E] uppercase tracking-wider">Members</p>
+                            <p className="text-[30px] font-bold text-[#F4E4BC]">{checkedInCount}/{members.length} <span className="text-[#D4AF37]">Checked In</span></p>
                         </div>
                     </div>
                 </motion.section>
