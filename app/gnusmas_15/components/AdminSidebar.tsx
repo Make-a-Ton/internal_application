@@ -27,7 +27,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
     const handleLogout = () => {
         sessionStorage.removeItem("admin_auth");
-        window.location.href = "/";
+        window.location.href = "/gnusmas_15";
     };
 
     return (
