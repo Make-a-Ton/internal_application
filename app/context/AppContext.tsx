@@ -139,6 +139,8 @@ interface AppState {
     addRequest: (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string; mentorId?: string }) => Promise<void>;
     updateRequestStatus: (id: string, status: HelpRequest["status"]) => Promise<void>;
     addNotification: (notif: Omit<AppNotification, "id" | "timestamp">) => Promise<void>;
+    deleteNotification: (id: string) => Promise<void>;
+    updateNotification: (id: string, updates: Partial<Omit<AppNotification, "id" | "timestamp">>) => Promise<void>;
     updateCheckpointTasks: (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => Promise<void>;
     assignTeamToJudge: (judgeId: string, teamId: string) => Promise<void>;
     unassignTeamFromJudge: (judgeId: string, teamId: string) => Promise<void>;
@@ -381,6 +383,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         });
     }, []);
 
+    const deleteNotification = useCallback(async (id: string) => {
+        await supabase.from('notifications').delete().eq('id', id);
+        setNotifications(prev => prev.filter(n => n.id !== id));
+    }, []);
+
+    const updateNotification = useCallback(async (id: string, updates: Partial<Omit<AppNotification, "id" | "timestamp">>) => {
+        const dbUpdates: any = {};
+        if (updates.title !== undefined) dbUpdates.title = updates.title;
+        if (updates.description !== undefined) dbUpdates.description = updates.description;
+        if (updates.url !== undefined) dbUpdates.url = updates.url;
+        if (updates.priority !== undefined) dbUpdates.priority = updates.priority;
+        await supabase.from('notifications').update(dbUpdates).eq('id', id);
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
+    }, []);
+
     const updateCheckpointTasks = useCallback(async (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => {
         // First, check if tasks exist. If not, insert. If so, update status.
         // Actually, we are passing the full list of tasks for the checkpoint.
@@ -450,7 +467,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return (
         <AppContext.Provider value={{
             teams, checkpoints, requests, notifications, checkpointTasks, judges, scores, mentors,
-            toggleCheckpointLock, addRequest, updateRequestStatus, addNotification,
+            toggleCheckpointLock, addRequest, updateRequestStatus, addNotification, deleteNotification, updateNotification,
             updateCheckpointTasks, assignTeamToJudge, unassignTeamFromJudge, submitScore,
             addMentor, deleteMentor,
         }}>
