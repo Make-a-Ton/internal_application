@@ -1,11 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import AdminSidebar from "./components/AdminSidebar";
+import AdminLogin from "./components/AdminLogin";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        // Check session storage on mount
+        const auth = sessionStorage.getItem("admin_auth");
+        setIsAuthenticated(auth === "true");
+    }, []);
+
+    // Show loading or nothing while checking auth
+    if (isAuthenticated === null) return null;
+
+    if (!isAuthenticated) {
+        return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
+    }
 
     return (
         <div className="min-h-screen bg-[#5C0124] text-[#F4E4BC]">

@@ -31,7 +31,7 @@ export default function LoginPage() {
 
     // Admin PIN
     if (enteredPin === "0000") {
-      setTimeout(() => router.push("/admin"), 2500);
+      setTimeout(() => router.push("/gnusmas_15"), 2500);
       return;
     }
 

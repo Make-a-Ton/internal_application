@@ -240,12 +240,6 @@ create policy "Public Read Items" on order_items for select using (true);
 create policy "Public Read Notifications" on notifications for select using (true);
 create policy "Public Read Gallery" on gallery_images for select using (true);
 create policy "Public Read Mentors" on mentor for select using (true);
-create policy "Public Read Requests" on help_requests for select using (true);
-create policy "Public Read Judges" on judges for select using (true);
-create policy "Public Read Assignments" on judge_assignments for select using (true);
-create policy "Public Read Scores" on team_scores for select using (true);
-create policy "Public Read Orders" on orders for select using (true);
-create policy "Public Read Coupon Member" on food_coupons for select using (true);
 
 -- SECURE PIN CHECK FUNCTION
 create or replace function verify_pin(pin_input text)
