@@ -12,10 +12,10 @@ export default function AdminDashboard() {
     const pendingRequests = requests.filter(r => r.status === "pending").length;
 
     const stats = [
-        { label: "Total Teams", value: String(teams.length), icon: Users, color: "bg-[#7A2840] text-[#D4AF37]", href: "/admin/teams" },
-        { label: "Active Requests", value: String(pendingRequests), icon: MessageSquare, color: "bg-[#7A2840] text-orange-400", href: "/admin/requests" },
-        { label: "Checkpoints Released", value: `${unlockedCount} / ${checkpoints.length}`, icon: Flag, color: "bg-[#7A2840] text-[#E7BB88]", href: "/admin/checkpoints" },
-        { label: "Notifications Sent", value: String(notifications.length), icon: Bell, color: "bg-[#7A2840] text-[#D4AF37]", href: "/admin/notifications" },
+        { label: "Total Teams", value: String(teams.length), icon: Users, color: "bg-[#7A2840] text-[#D4AF37]", href: "/gnusmas_15/teams" },
+        { label: "Active Requests", value: String(pendingRequests), icon: MessageSquare, color: "bg-[#7A2840] text-orange-400", href: "/gnusmas_15/requests" },
+        { label: "Checkpoints Released", value: `${unlockedCount} / ${checkpoints.length}`, icon: Flag, color: "bg-[#7A2840] text-[#E7BB88]", href: "/gnusmas_15/checkpoints" },
+        { label: "Notifications Sent", value: String(notifications.length), icon: Bell, color: "bg-[#7A2840] text-[#D4AF37]", href: "/gnusmas_15/notifications" },
     ];
 
     return (
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
                             <h2 className="text-lg font-bold text-[#3A0015]">Recent Requests</h2>
                             <p className="text-sm text-[#3A0015]/60">Latest help requests from teams</p>
                         </div>
-                        <Link href="/admin/requests" className="text-sm font-semibold text-[#5C0124] hover:text-[#7A2840]">
+                        <Link href="/gnusmas_15/requests" className="text-sm font-semibold text-[#5C0124] hover:text-[#7A2840]">
                             View All →
                         </Link>
                     </div>

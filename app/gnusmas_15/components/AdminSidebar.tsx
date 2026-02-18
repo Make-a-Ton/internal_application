@@ -6,14 +6,14 @@ import { LayoutDashboard, Users, Flag, MessageSquare, Bell, LogOut, Gavel, Troph
 import { useRouter } from "next/navigation";
 
 const sidebarItems = [
-    { icon: LayoutDashboard, href: "/admin", label: "Dashboard" },
-    { icon: Users, href: "/admin/teams", label: "Teams" },
-    { icon: Flag, href: "/admin/checkpoints", label: "Checkpoints" },
-    { icon: MessageSquare, href: "/admin/requests", label: "Requests" },
-    { icon: Bell, href: "/admin/notifications", label: "Notifications" },
-    { icon: Gavel, href: "/admin/judges", label: "Judges" },
-    { icon: Trophy, href: "/admin/leaderboard", label: "Leaderboard" },
-    { icon: GraduationCap, href: "/admin/mentors", label: "Mentors" },
+    { icon: LayoutDashboard, href: "/gnusmas_15", label: "Dashboard" },
+    { icon: Users, href: "/gnusmas_15/teams", label: "Teams" },
+    { icon: Flag, href: "/gnusmas_15/checkpoints", label: "Checkpoints" },
+    { icon: MessageSquare, href: "/gnusmas_15/requests", label: "Requests" },
+    { icon: Bell, href: "/gnusmas_15/notifications", label: "Notifications" },
+    { icon: Gavel, href: "/gnusmas_15/judges", label: "Judges" },
+    { icon: Trophy, href: "/gnusmas_15/leaderboard", label: "Leaderboard" },
+    { icon: GraduationCap, href: "/gnusmas_15/mentors", label: "Mentors" },
 ];
 
 interface AdminSidebarProps {
@@ -26,7 +26,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const router = useRouter();
 
     const handleLogout = () => {
-        router.push("/");
+        sessionStorage.removeItem("admin_auth");
+        window.location.href = "/";
     };
 
     return (
@@ -64,7 +65,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 <nav className="flex-1 py-4">
                     {sidebarItems.map((item) => {
                         const isActive = pathname === item.href ||
-                            (item.href !== "/admin" && pathname.startsWith(item.href));
+                            (item.href !== "/gnusmas_15" && pathname.startsWith(item.href));
                         return (
                             <Link
                                 key={item.href}

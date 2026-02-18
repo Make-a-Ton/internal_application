@@ -170,9 +170,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const fetchData = async () => {
         // 1. Teams & Members
         const { data: teamsData, error: teamsError } = await supabase.from('team').select('*');
-        if (teamsError) console.error("Error fetching teams:", teamsError.message);
+        if (teamsError) console.error("Error fetching teams:", teamsError);
         const { data: membersData, error: membersError } = await supabase.from('member').select('*');
-        if (membersError) console.error("Error fetching members:", membersError.message);
+        if (membersError) console.error("Error fetching members:", membersError);
 
         if (teamsData) {
             const formattedTeams: TeamInfo[] = teamsData.map(t => ({
@@ -194,7 +194,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 2. Checkpoints
         const { data: cpData, error: cpError } = await supabase.from('checkpoints').select('*').order('number');
-        if (cpError) console.error("Error fetching checkpoints:", cpError.message);
+        if (cpError) console.error("Error fetching checkpoints:", cpError);
         if (cpData) {
             setCheckpoints(cpData.map(c => ({
                 id: c.id,
@@ -208,7 +208,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 3. Tasks
         const { data: tasksData, error: tasksError } = await supabase.from('checkpoint_tasks').select('*');
-        if (tasksError) console.error("Error fetching tasks:", tasksError.message);
+        if (tasksError) console.error("Error fetching tasks:", tasksError);
         if (tasksData) {
             const taskMap: { [key: string]: CheckpointTask[] } = {};
             tasksData.forEach(task => {
@@ -221,9 +221,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 4. Judges & Assignments
         const { data: judgesData, error: judgesError } = await supabase.from('judges').select('*');
-        if (judgesError) console.error("Error fetching judges:", judgesError.message);
+        if (judgesError) console.error("Error fetching judges:", judgesError);
         const { data: assignmentsData, error: assignmentsError } = await supabase.from('judge_assignments').select('*');
-        if (assignmentsError) console.error("Error fetching assignments:", assignmentsError.message);
+        if (assignmentsError) console.error("Error fetching assignments:", assignmentsError);
 
         if (judgesData) {
             setJudges(judgesData.map(j => ({
@@ -236,7 +236,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 5. Help Requests (Joined with Teams for name)
         const { data: reqData, error: reqError } = await supabase.from('help_requests').select('*, team(name)').order('created_at', { ascending: false });
-        if (reqError) console.error("Error fetching requests:", reqError.message);
+        if (reqError) console.error("Error fetching requests:", reqError);
         if (reqData) {
             setRequests(reqData.map(r => ({
                 id: r.id,
@@ -254,7 +254,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 6. Notifications
         const { data: notifData, error: notifError } = await supabase.from('notifications').select('*').order('created_at', { ascending: false });
-        if (notifError) console.error("Error fetching notifications:", notifError.message);
+        if (notifError) console.error("Error fetching notifications:", notifError);
         if (notifData) {
             setNotifications(notifData.map(n => ({
                 id: n.id,
@@ -268,7 +268,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 7. Scores
         const { data: scoresData, error: scoresError } = await supabase.from('team_scores').select('*');
-        if (scoresError) console.error("Error fetching scores:", scoresError.message);
+        if (scoresError) console.error("Error fetching scores:", scoresError);
         if (scoresData) {
             setScores(scoresData.map(s => ({
                 id: s.id,
@@ -289,7 +289,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
         // 8. Mentors
         const { data: mentorData, error: mentorError } = await supabase.from('mentor').select('*');
-        if (mentorError) console.error("Error fetching mentors:", mentorError.message);
+        if (mentorError) console.error("Error fetching mentors:", mentorError);
         if (mentorData) {
             setMentors(mentorData.map(m => ({
                 id: m.id || String(Math.random()),
