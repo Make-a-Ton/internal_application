@@ -11,7 +11,8 @@ export default function LoadingScreen() {
                 loop
                 muted
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover scale-[3] md:scale-100"
+                style={{ objectFit: "cover" }}
             >
                 <source src="/Boat_Animation_Generated.mp4" type="video/mp4" />
             </video>
