@@ -6,15 +6,22 @@ import Link from "next/link";
 import { useAppState } from "../context/AppContext";
 
 export default function AdminDashboard() {
-    const { checkpoints, requests, notifications, teams } = useAppState();
+    const { teamCheckpointStatuses, requests, notifications, teams } = useAppState();
 
-    const unlockedCount = checkpoints.filter(c => !c.isLocked).length;
+    const unlockedCount = teamCheckpointStatuses.reduce((acc, status) => {
+        let count = 0;
+        if (status.check_1 !== 'locked') count++;
+        if (status.check_2 !== 'locked') count++;
+        if (status.check_3 !== 'locked') count++;
+        return acc + count;
+    }, 0);
+
     const pendingRequests = requests.filter(r => r.status === "pending").length;
 
     const stats = [
         { label: "Total Teams", value: String(teams.length), icon: Users, color: "bg-[#7A2840] text-[#D4AF37]", href: "/gnusmas_15/teams" },
         { label: "Active Requests", value: String(pendingRequests), icon: MessageSquare, color: "bg-[#7A2840] text-orange-400", href: "/gnusmas_15/requests" },
-        { label: "Checkpoints Released", value: `${unlockedCount} / ${checkpoints.length}`, icon: Flag, color: "bg-[#7A2840] text-[#E7BB88]", href: "/gnusmas_15/checkpoints" },
+        { label: "Checkpoints Released", value: `${unlockedCount} / ${teams.length * 3}`, icon: Flag, color: "bg-[#7A2840] text-[#E7BB88]", href: "/gnusmas_15/checkpoints" },
         { label: "Notifications Sent", value: String(notifications.length), icon: Bell, color: "bg-[#7A2840] text-[#D4AF37]", href: "/gnusmas_15/notifications" },
     ];
 

@@ -18,7 +18,12 @@ create type food_enum as enum (
   'non-veg',
   'ramadan'
 );
-
+create type  status_enum as enum (
+   'locked',
+   'pending',
+   'finished'
+ );
+ 
 -- =============================================
 -- 1. PROFILES (Linked to Supabase Auth - optional for now if using PINs)
 -- =============================================
@@ -70,27 +75,16 @@ create table public.member (
 -- =============================================
 -- 4. CHECKPOINTS
 -- =============================================
-create table checkpoints (
-  id serial primary key,
-  number int not null,
-  title text not null,
-  description text not null,
-  is_locked boolean default true,
-  released_at timestamptz,
-  created_at timestamptz default now()
-);
-
--- =============================================
--- 5. CHECKPOINT TASKS (Submissions)
--- =============================================
-create table checkpoint_tasks (
-  id uuid primary key default gen_random_uuid(),
-  team_id uuid references team(id) on delete cascade not null,
-  checkpoint_id int references checkpoints(id) on delete cascade not null,
-  text text not null,
-  completed boolean default false,
-  created_at timestamptz default now()
-);
+create table public.checkpoints (
+  id uuid not null default gen_random_uuid (),
+  team_id uuid null,
+  check_1 public.status_enum not null default 'locked'::status_enum,
+  check_2 public.status_enum not null default 'locked'::status_enum,
+  check_3 public.status_enum not null default 'locked'::status_enum,
+  created_at timestamp with time zone null default now(),
+  constraint checkpoints_pkey primary key (id),
+  constraint checkpoints_team_id_fkey foreign KEY (team_id) references team (id)
+) TABLESPACE pg_default;
 
 -- =============================================
 -- 6. HELP REQUESTS
