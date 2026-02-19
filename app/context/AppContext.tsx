@@ -1,22 +1,16 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import { CHECKPOINT_DEFINITIONS, CheckpointDefinition } from "../config/checkpoints";
 
 // ============== TYPES ==============
-export interface CheckpointTask {
-    id: string; // UUID from DB
-    text: string;
-    completed: boolean;
-}
-
-export interface Checkpoint {
-    id: number;
-    number: number;
-    title: string;
-    description: string;
-    isLocked: boolean;
-    releasedAt?: string;
+export interface TeamCheckpointStatus {
+    id: string;
+    teamId: string;
+    check_1: 'locked' | 'pending' | 'finished';
+    check_2: 'locked' | 'pending' | 'finished';
+    check_3: 'locked' | 'pending' | 'finished';
 }
 
 export interface HelpRequest {
@@ -128,25 +122,27 @@ export function computeLeaderboard(scores: TeamScore[], teams: TeamInfo[]): Lead
 // ============== CONTEXT ==============
 interface AppState {
     teams: TeamInfo[];
-    checkpoints: Checkpoint[];
+    teamCheckpointStatuses: TeamCheckpointStatus[];
+    checkpointDefinitions: CheckpointDefinition[];
     requests: HelpRequest[];
     notifications: AppNotification[];
-    checkpointTasks: { [key: string]: CheckpointTask[] };
     judges: Judge[];
     scores: TeamScore[];
     mentors: Mentor[];
-    toggleCheckpointLock: (id: number) => Promise<void>;
     addRequest: (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string; mentorId?: string }) => Promise<void>;
     updateRequestStatus: (id: string, status: HelpRequest["status"]) => Promise<void>;
     addNotification: (notif: Omit<AppNotification, "id" | "timestamp">) => Promise<void>;
     deleteNotification: (id: string) => Promise<void>;
     updateNotification: (id: string, updates: Partial<Omit<AppNotification, "id" | "timestamp">>) => Promise<void>;
-    updateCheckpointTasks: (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => Promise<void>;
     assignTeamToJudge: (judgeId: string, teamId: string) => Promise<void>;
     unassignTeamFromJudge: (judgeId: string, teamId: string) => Promise<void>;
     submitScore: (score: Omit<TeamScore, "id" | "timestamp">) => Promise<void>;
     addMentor: (mentor: Omit<Mentor, "id">) => Promise<void>;
     deleteMentor: (id: string) => Promise<void>;
+    updateCheckpointStatus: (teamId: string, checkpointNumber: 1 | 2 | 3, status: 'locked' | 'pending' | 'finished') => Promise<void>;
+    unlockCheckpointGlobally: (checkpointNumber: 1 | 2 | 3) => Promise<void>;
+    lockCheckpointGlobally: (checkpointNumber: 1 | 2 | 3) => Promise<void>;
+    globalCheckpointStatus: TeamCheckpointStatus | null;
 }
 
 const AppContext = createContext<AppState | null>(null);
@@ -159,13 +155,14 @@ export function useAppState() {
 
 export function AppProvider({ children }: { children: ReactNode }) {
     const [teams, setTeams] = useState<TeamInfo[]>([]);
-    const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
+    const [teamCheckpointStatuses, setTeamCheckpointStatuses] = useState<TeamCheckpointStatus[]>([]);
     const [requests, setRequests] = useState<HelpRequest[]>([]);
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
-    const [checkpointTasks, setCheckpointTasks] = useState<{ [key: string]: CheckpointTask[] }>({});
     const [judges, setJudges] = useState<Judge[]>([]);
     const [scores, setScores] = useState<TeamScore[]>([]);
     const [mentors, setMentors] = useState<Mentor[]>([]);
+
+    const [globalCheckpointStatus, setGlobalCheckpointStatus] = useState<TeamCheckpointStatus | null>(null);
 
     const fetchData = async () => {
         // 1. Teams & Members
@@ -197,34 +194,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
             setTeams(formattedTeams);
         }
 
-        // 2. Checkpoints
-        const { data: cpData, error: cpError } = await supabase.from('checkpoints').select('*').order('number');
+        // 2. Checkpoints (New Schema)
+        const { data: cpData, error: cpError } = await supabase.from('checkpoints').select('*');
         if (cpError) console.error("Error fetching checkpoints:", cpError);
         if (cpData) {
-            setCheckpoints(cpData.map(c => ({
+            // Seperate Global Row (team_id is null)
+            const globalRow = cpData.find(c => c.team_id === null);
+            if (globalRow) {
+                setGlobalCheckpointStatus({
+                    id: globalRow.id,
+                    teamId: 'GLOBAL',
+                    check_1: globalRow.check_1,
+                    check_2: globalRow.check_2,
+                    check_3: globalRow.check_3
+                });
+            } else {
+                setGlobalCheckpointStatus(null);
+            }
+
+            // Set Team Statuses (filter out global row)
+            setTeamCheckpointStatuses(cpData.filter(c => c.team_id !== null).map(c => ({
                 id: c.id,
-                number: c.number,
-                title: c.title,
-                description: c.description,
-                isLocked: c.is_locked,
-                releasedAt: c.released_at ? new Date(c.released_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true }) : undefined,
+                teamId: c.team_id,
+                check_1: c.check_1,
+                check_2: c.check_2,
+                check_3: c.check_3
             })));
         }
 
-        // 3. Tasks
-        const { data: tasksData, error: tasksError } = await supabase.from('checkpoint_tasks').select('*');
-        if (tasksError) console.error("Error fetching tasks:", tasksError);
-        if (tasksData) {
-            const taskMap: { [key: string]: CheckpointTask[] } = {};
-            tasksData.forEach(task => {
-                const key = `${task.team_id}:${task.checkpoint_id}`;
-                if (!taskMap[key]) taskMap[key] = [];
-                taskMap[key].push({ id: task.id, text: task.text, completed: task.completed });
-            });
-            setCheckpointTasks(taskMap);
-        }
-
-        // 4. Judges & Assignments
+        // 3. Judges & Assignments
         const { data: judgesData, error: judgesError } = await supabase.from('judges').select('*');
         if (judgesError) console.error("Error fetching judges:", judgesError);
         const { data: assignmentsData, error: assignmentsError } = await supabase.from('judge_assignments').select('*');
@@ -239,7 +237,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             })));
         }
 
-        // 5. Help Requests (Joined with Teams for name)
+        // 4. Help Requests (Joined with Teams for name)
         const { data: reqData, error: reqError } = await supabase.from('help_requests').select('*, team(name)').order('created_at', { ascending: false });
         if (reqError) console.error("Error fetching requests:", reqError);
         if (reqData) {
@@ -257,7 +255,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             })));
         }
 
-        // 6. Notifications
+        // 5. Notifications
         const { data: notifData, error: notifError } = await supabase.from('notifications').select('*').order('created_at', { ascending: false });
         if (notifError) console.error("Error fetching notifications:", notifError);
         if (notifData) {
@@ -271,7 +269,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             })));
         }
 
-        // 7. Scores
+        // 6. Scores
         const { data: scoresData, error: scoresError } = await supabase.from('team_scores').select('*');
         if (scoresError) console.error("Error fetching scores:", scoresError);
         if (scoresData) {
@@ -292,7 +290,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             })));
         }
 
-        // 8. Mentors
+        // 7. Mentors
         const { data: mentorData, error: mentorError } = await supabase.from('mentor').select('*');
         if (mentorError) console.error("Error fetching mentors:", mentorError);
         if (mentorData) {
@@ -331,18 +329,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         };
     }, []);
 
-    const toggleCheckpointLock = useCallback(async (id: number) => {
-        const cp = checkpoints.find(c => c.id === id);
-        if (!cp) return;
-
-        const newLocked = !cp.isLocked;
-        const releasedAt = !newLocked ? new Date().toISOString() : null;
-
-        await supabase.from('checkpoints').update({ is_locked: newLocked, released_at: releasedAt }).eq('id', id);
-        // State updates automatically via subscription or we can optimistic update here
-        setCheckpoints(prev => prev.map(c => c.id === id ? { ...c, isLocked: newLocked, releasedAt: releasedAt ? new Date(releasedAt).toLocaleString() : undefined } : c));
-    }, [checkpoints]);
-
     const addRequest = useCallback(async (req: Omit<HelpRequest, "id" | "timestamp" | "status" | "team"> & { teamId?: string }) => {
         if (!req.teamId) {
             console.error("Missing teamId for help request");
@@ -372,7 +358,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             console.error("Unexpected error in addRequest:", err);
             alert(`An unexpected error occurred: ${err instanceof Error ? err.message : String(err)}`);
         }
-    }, [supabase]);
+    }, []);
 
     const updateRequestStatus = useCallback(async (id: string, status: HelpRequest["status"]) => {
         await supabase.from('help_requests').update({ status }).eq('id', id);
@@ -401,32 +387,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (updates.priority !== undefined) dbUpdates.priority = updates.priority;
         await supabase.from('notifications').update(dbUpdates).eq('id', id);
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
-    }, []);
-
-    const updateCheckpointTasks = useCallback(async (teamId: string, checkpointId: number, tasks: CheckpointTask[]) => {
-        // First, check if tasks exist. If not, insert. If so, update status.
-        // Actually, we are passing the full list of tasks for the checkpoint.
-        // And DB stores individual tasks.
-        // Strategy:
-        // 1. Get existing tasks for this team/checkpoint from DB? Not needed if we trust the input.
-        // 2. We can't batch delete/insert easily without transaction or complex query.
-        // 3. Upsert by (team_id, checkpoint_id, text) because text is unique per checkpoint/team in current model?
-        // Wait, text might change?
-        // A better approach is to rely on 'text' being the unique key logic as per schema.
-
-        const upsertData = tasks.map(t => ({
-            team_id: teamId,
-            checkpoint_id: checkpointId,
-            text: t.text,
-            completed: t.completed
-        }));
-
-        const { error } = await supabase.from('checkpoint_tasks').upsert(upsertData, { onConflict: 'team_id,checkpoint_id,text' });
-        if (error) console.error("Error updating tasks:", error);
-
-        // Local update
-        const key = `${teamId}:${checkpointId}`;
-        setCheckpointTasks(prev => ({ ...prev, [key]: tasks }));
     }, []);
 
     const assignTeamToJudge = useCallback(async (judgeId: string, teamId: string) => {
@@ -461,7 +421,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const addMentor = useCallback(async (mentor: Omit<Mentor, "id">) => {
         await supabase.from('mentor').insert(mentor);
-        // fetchData will be triggered by subscription or we can update locally
     }, []);
 
     const deleteMentor = useCallback(async (id: string) => {
@@ -469,17 +428,174 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setMentors(prev => prev.filter(m => m.id !== id));
     }, []);
 
+    const updateCheckpointStatus = useCallback(async (teamId: string, checkpointNumber: 1 | 2 | 3, status: 'locked' | 'pending' | 'finished') => {
+        const column = `check_${checkpointNumber}`;
+
+        // Check if row exists
+        const { data } = await supabase.from('checkpoints').select('id').eq('team_id', teamId).single();
+
+        if (data) {
+            // Update
+            await supabase.from('checkpoints').update({ [column]: status }).eq('team_id', teamId);
+        } else {
+            // Create
+            const newRow = {
+                team_id: teamId,
+                check_1: 'locked',
+                check_2: 'locked',
+                check_3: 'locked',
+                [column]: status
+            };
+            await supabase.from('checkpoints').insert(newRow);
+        }
+
+        // Optimistic update
+        setTeamCheckpointStatuses(prev => {
+            const existing = prev.find(p => p.teamId === teamId);
+            if (existing) {
+                return prev.map(p => p.teamId === teamId ? { ...p, [column]: status } : p);
+            } else {
+                return [...prev, {
+                    id: 'optimistic-' + Math.random(),
+                    teamId: teamId,
+                    check_1: checkpointNumber === 1 ? status : 'locked',
+                    check_2: checkpointNumber === 2 ? status : 'locked',
+                    check_3: checkpointNumber === 3 ? status : 'locked',
+                } as TeamCheckpointStatus];
+            }
+        });
+    }, []);
+
+    const unlockCheckpointGlobally = useCallback(async (checkpointNumber: 1 | 2 | 3) => {
+        const column = `check_${checkpointNumber}`;
+
+        // 1. Update Global Row to 'pending' (Open)
+        const { data: globalRow } = await supabase.from('checkpoints').select('id').is('team_id', null).single();
+
+        if (globalRow) {
+            await supabase.from('checkpoints').update({ [column]: 'pending' }).eq('id', globalRow.id);
+        } else {
+            // Create Global Row if it doesn't exist
+            await supabase.from('checkpoints').insert({
+                team_id: null,
+                check_1: checkpointNumber === 1 ? 'pending' : 'locked',
+                check_2: checkpointNumber === 2 ? 'pending' : 'locked',
+                check_3: checkpointNumber === 3 ? 'pending' : 'locked'
+            });
+        }
+
+        // Update local state for global
+        setGlobalCheckpointStatus(prev => ({
+            id: prev?.id || 'virtual-global',
+            teamId: 'GLOBAL',
+            check_1: checkpointNumber === 1 ? 'pending' : prev?.check_1 || 'locked',
+            check_2: checkpointNumber === 2 ? 'pending' : prev?.check_2 || 'locked',
+            check_3: checkpointNumber === 3 ? 'pending' : prev?.check_3 || 'locked',
+        }));
+
+
+        // 2. Ensuring all teams have at least a row and are set to 'pending' if they were 'locked'
+        //    WE DO NOT OVERWRITE 'finished'.
+        //    Actually, if we are "Unlocking", we basically just want to make sure everyone CAN submit.
+        //    So we ensure they have a row.
+
+        const updates: any[] = [];
+        const inserts: any[] = [];
+
+        teams.forEach(team => {
+            const existing = teamCheckpointStatuses.find(s => s.teamId === team.id);
+            const isRealRow = existing && existing.id && !existing.id.toString().startsWith('optimistic') && existing.id !== 'virtual';
+
+            if (!isRealRow) {
+                inserts.push({
+                    team_id: team.id,
+                    check_1: checkpointNumber === 1 ? 'pending' : 'locked',
+                    check_2: checkpointNumber === 2 ? 'pending' : 'locked',
+                    check_3: checkpointNumber === 3 ? 'pending' : 'locked',
+                });
+            } else {
+                // If it exists, we ONLY update if it's currently 'locked'. 
+                // If it's 'finished', we leave it. If it's 'pending', we leave it.
+                if (existing?.[column as keyof TeamCheckpointStatus] === 'locked') {
+                    updates.push({
+                        id: existing!.id,
+                        [column]: 'pending'
+                    });
+                }
+            }
+        });
+
+        const promises = [];
+        if (updates.length > 0) promises.push(supabase.from('checkpoints').upsert(updates));
+        if (inserts.length > 0) promises.push(supabase.from('checkpoints').insert(inserts));
+
+        await Promise.all(promises);
+
+        // Optimistic Update Teams
+        setTeamCheckpointStatuses(prev => {
+            const newStatuses = [...prev];
+            teams.forEach(t => {
+                const idx = newStatuses.findIndex(s => s.teamId === t.id);
+                if (idx >= 0) {
+                    // Only update if locked
+                    if (newStatuses[idx][column as keyof TeamCheckpointStatus] === 'locked') {
+                        newStatuses[idx] = { ...newStatuses[idx], [column]: 'pending' };
+                    }
+                } else {
+                    newStatuses.push({
+                        id: 'optimistic-global-' + Math.random(),
+                        teamId: t.id,
+                        check_1: checkpointNumber === 1 ? 'pending' : 'locked',
+                        check_2: checkpointNumber === 2 ? 'pending' : 'locked',
+                        check_3: checkpointNumber === 3 ? 'pending' : 'locked',
+                    } as TeamCheckpointStatus);
+                }
+            });
+            return newStatuses;
+        });
+
+    }, [teams, teamCheckpointStatuses]);
+
+    const lockCheckpointGlobally = useCallback(async (checkpointNumber: 1 | 2 | 3) => {
+        const column = `check_${checkpointNumber}`;
+
+        // ONLY Update Global Row to 'locked' (Closed)
+        // Do NOT touch team rows.
+
+        const { data: globalRow } = await supabase.from('checkpoints').select('id').is('team_id', null).single();
+        if (globalRow) {
+            await supabase.from('checkpoints').update({ [column]: 'locked' }).eq('id', globalRow.id);
+        } else {
+            await supabase.from('checkpoints').insert({
+                team_id: null,
+                check_1: checkpointNumber === 1 ? 'locked' : 'locked',
+                check_2: checkpointNumber === 2 ? 'locked' : 'locked',
+                check_3: checkpointNumber === 3 ? 'locked' : 'locked'
+            });
+        }
+
+        // Update local state for global
+        setGlobalCheckpointStatus(prev => ({
+            id: prev?.id || 'virtual-global',
+            teamId: 'GLOBAL',
+            check_1: checkpointNumber === 1 ? 'locked' : prev?.check_1 || 'locked',
+            check_2: checkpointNumber === 2 ? 'locked' : prev?.check_2 || 'locked',
+            check_3: checkpointNumber === 3 ? 'locked' : prev?.check_3 || 'locked',
+        }));
+
+        // No changes to teamCheckpointStatuses needed!
+
+    }, []);
+
     return (
         <AppContext.Provider value={{
-            teams, checkpoints, requests, notifications, checkpointTasks, judges, scores, mentors,
-            toggleCheckpointLock, addRequest, updateRequestStatus, addNotification, deleteNotification, updateNotification,
-            updateCheckpointTasks, assignTeamToJudge, unassignTeamFromJudge, submitScore,
-            addMentor, deleteMentor,
+            teams, teamCheckpointStatuses, checkpointDefinitions: CHECKPOINT_DEFINITIONS, requests, notifications, judges, scores, mentors,
+            addRequest, updateRequestStatus, addNotification, deleteNotification, updateNotification,
+            assignTeamToJudge, unassignTeamFromJudge, submitScore,
+            addMentor, deleteMentor, updateCheckpointStatus, unlockCheckpointGlobally, lockCheckpointGlobally, globalCheckpointStatus
         }}>
             {children}
         </AppContext.Provider>
     );
 }
 
-// Keeping this for backward compatibility (but empty) to allow step-by-step migration
-export const allTeams: TeamInfo[] = [];
