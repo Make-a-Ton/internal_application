@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Flag, MessageSquare, Bell, LogOut, Gavel, Trophy, X, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Users, Flag, MessageSquare, Bell, LogOut, Gavel, Trophy, X, GraduationCap, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const sidebarItems = [
     { icon: LayoutDashboard, href: "/gnusmas_15", label: "Dashboard" },
     { icon: Users, href: "/gnusmas_15/teams", label: "Teams" },
+    { icon: FileText, href: "/gnusmas_15/submissions", label: "Submissions" },
     { icon: Flag, href: "/gnusmas_15/checkpoints", label: "Checkpoints" },
     { icon: MessageSquare, href: "/gnusmas_15/requests", label: "Requests" },
     { icon: Bell, href: "/gnusmas_15/notifications", label: "Notifications" },
@@ -61,38 +62,41 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                     </button>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 py-4">
-                    {sidebarItems.map((item) => {
-                        const isActive = pathname === item.href ||
-                            (item.href !== "/gnusmas_15" && pathname.startsWith(item.href));
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={onClose}
-                                className={`flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${isActive
-                                    ? "bg-[#7A2840] text-[#F4E4BC] border-r-2 border-[#D4AF37]"
-                                    : "text-[#C09B6E] hover:text-[#F4E4BC] hover:bg-[#7A2840]/50"
-                                    }`}
-                            >
-                                <item.icon className="h-5 w-5" />
-                                {item.label}
-                            </Link>
-                        );
-                    })}
-                </nav>
+                {/* Scrollable Content wrapper */}
+                <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col">
+                    {/* Navigation */}
+                    <nav className="py-2">
+                        {sidebarItems.map((item) => {
+                            const isActive = pathname === item.href ||
+                                (item.href !== "/gnusmas_15" && pathname.startsWith(item.href));
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={onClose}
+                                    className={`flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${isActive
+                                        ? "bg-[#7A2840] text-[#F4E4BC] border-r-2 border-[#D4AF37]"
+                                        : "text-[#C09B6E] hover:text-[#F4E4BC] hover:bg-[#7A2840]/50"
+                                        }`}
+                                >
+                                    <item.icon className="h-5 w-5" />
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
 
-                {/* Logout */}
-                <div className="p-4 border-t border-[#7A2840]">
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-[#C09B6E] hover:text-red-300 hover:bg-[#7A2840]/50 rounded-lg transition-colors"
-                        suppressHydrationWarning={true}
-                    >
-                        <LogOut className="h-5 w-5" />
-                        Logout
-                    </button>
+                    {/* Logout */}
+                    <div className="p-4 border-t border-[#7A2840]">
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-[#C09B6E] hover:text-red-300 hover:bg-[#7A2840]/50 rounded-lg transition-colors"
+                            suppressHydrationWarning={true}
+                        >
+                            <LogOut className="h-5 w-5" />
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </aside>
         </>

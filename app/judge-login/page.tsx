@@ -207,6 +207,7 @@ export default function JudgeLoginPage() {
                             onClick={handleLogin}
                             disabled={isLoading}
                             className="w-full bg-black hover:bg-black/90 text-gold-light font-bold py-3 pl-8 pr-2 rounded-full flex items-center justify-between transition-colors group mt-6 shadow-xl hover:shadow-gold-light/10 border border-gold-dark/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                            suppressHydrationWarning
                         >
                             <span className="text-xl tracking-wide">{isLoading ? "Loading..." : "Login as Judge"}</span>
                             <div className="bg-gold-light text-burgundy rounded-full p-3 group-hover:rotate-45 transition-transform duration-300 shadow-lg">

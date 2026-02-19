@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../lib/supabase";
 import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+import Link from "next/link";
 
 // Scoring criteria definition (self-contained, no dependency on AppContext)
 const SCORING_CRITERIA = [
@@ -346,7 +347,15 @@ function ScoringContent() {
                             animate={{ opacity: 1, y: 0 }}
                             className="bg-[#F8F0E3] rounded-2xl p-6 border border-[#E8D5B8] sticky top-8 shadow-sm"
                         >
-                            <h3 className="font-bold text-[#5C0124] mb-4">{selectedTeam.name}</h3>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-bold text-[#5C0124]">{selectedTeam.name}</h3>
+                                <Link
+                                    href={`/judge/submissions?team=${selectedTeam.id}`}
+                                    className="text-xs font-bold text-[#5C0124] hover:underline flex items-center gap-1"
+                                >
+                                    View Submission <ArrowRight className="h-3 w-3" />
+                                </Link>
+                            </div>
                             <p className="text-xs text-[#8B6F4E] mb-4">{selectedTeam.college} · {selectedTeam.track}</p>
 
                             {/* Score Breakdown */}

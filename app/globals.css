@@ -108,3 +108,16 @@ textarea {
   pointer-events: none;
   z-index: 0;
 }
+
+/* Hide browser-native password reveal/clear buttons for better custom PIN UI */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+}
