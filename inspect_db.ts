@@ -7,18 +7,22 @@ const envPath = path.resolve(__dirname, '.env.local');
 try {
     const envContent = fs.readFileSync(envPath, 'utf-8');
     const env: Record<string, string> = {};
-    envContent.split('\n').forEach(line => {
+    // Fix splitting for Windows and trimming keys/values
+    envContent.split(/\r?\n/).forEach(line => {
         const match = line.match(/^([^=]+)=(.*)$/);
         if (match) {
-            env[match[1]] = match[2].replace(/^"|"$/g, ''); // Remove quotes if present
+            env[match[1].trim()] = match[2].trim().replace(/^"|"$/g, '');
         }
     });
 
+    console.log("Loaded keys:", Object.keys(env));
     const supabaseUrl = env['NEXT_PUBLIC_SUPABASE_URL'];
     const supabaseKey = env['NEXT_PUBLIC_SUPABASE_ANON_KEY'];
 
     if (!supabaseUrl || !supabaseKey) {
-        console.error("Missing credentials in .env.local");
+        console.error(`Missing credentials in .env.local at ${envPath}`);
+        console.log("URL:", supabaseUrl ? "FOUND" : "MISSING");
+        console.log("KEY:", supabaseKey ? "FOUND" : "MISSING");
         process.exit(1);
     }
 
