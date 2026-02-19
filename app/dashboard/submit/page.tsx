@@ -19,7 +19,7 @@ export default function SubmitProjectPage() {
     // General Information
     const [projectName, setProjectName] = useState("");
     const [submissionTitle, setSubmissionTitle] = useState("");
-    const [tagline, setTagline] = useState("");
+
     const [description, setDescription] = useState("");
     const [techStack, setTechStack] = useState("");
 
@@ -142,17 +142,7 @@ export default function SubmitProjectPage() {
                             />
                         </div>
 
-                        {/* Project Tagline */}
-                        <div>
-                            <label className={labelClass}>Project Tagline (Short)</label>
-                            <input
-                                type="text"
-                                value={tagline}
-                                onChange={(e) => setTagline(e.target.value)}
-                                placeholder="One-liner describing your project..."
-                                className={inputClass}
-                            />
-                        </div>
+
 
                         {/* Detailed Description */}
                         <div>
