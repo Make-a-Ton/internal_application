@@ -281,7 +281,7 @@ function ScoringContent() {
                             router.replace(`/judge/scoring?team=${e.target.value}`);
                         }
                     }}
-                    className="w-full max-w-md px-4 py-3 bg-[#7A2840]/50 border border-[#7A2840] rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#D4AF37] text-[#F4E4BC]"
+                    className="w-full max-w-md px-4 py-3 bg-[#F8F0E3] border border-[#E8D5B8] rounded-xl text-sm font-bold text-black focus:outline-none focus:ring-2 focus:ring-[#5C0124]"
                 >
                     <option value="">Choose a team...</option>
                     {assignedTeams.map(t => {
@@ -346,15 +346,15 @@ function ScoringContent() {
                             animate={{ opacity: 1, y: 0 }}
                             className="bg-[#F8F0E3] rounded-2xl p-6 border border-[#E8D5B8] sticky top-8 shadow-sm"
                         >
-                            <h3 className="font-bold text-[#F4E4BC] mb-4">{selectedTeam.name}</h3>
-                            <p className="text-xs text-[#C09B6E] mb-4">{selectedTeam.college} · {selectedTeam.track}</p>
+                            <h3 className="font-bold text-[#5C0124] mb-4">{selectedTeam.name}</h3>
+                            <p className="text-xs text-[#8B6F4E] mb-4">{selectedTeam.college} · {selectedTeam.track}</p>
 
                             {/* Score Breakdown */}
                             <div className="space-y-2 mb-6">
                                 {SCORING_CRITERIA.map(c => (
                                     <div key={c.key} className="flex justify-between text-sm">
-                                        <span className="text-[#C09B6E]">{c.label}</span>
-                                        <span className="font-bold text-[#F4E4BC]">{currentScores[c.key]}</span>
+                                        <span className="text-black">{c.label}</span>
+                                        <span className="font-bold text-black">{currentScores[c.key]}</span>
                                     </div>
                                 ))}
                             </div>
