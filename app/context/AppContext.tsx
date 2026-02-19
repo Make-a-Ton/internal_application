@@ -170,7 +170,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const fetchData = async () => {
         // 1. Teams & Members
         const { data: teamsData, error: teamsError } = await supabase.from('team').select('*');
-        if (teamsError) console.error("Error fetching teams:", teamsError);
+        if (teamsError) {
+            console.error("Error fetching teams (FULL):", JSON.stringify(teamsError, null, 2));
+            console.error("Error fetching teams (MSG):", teamsError.message);
+            console.error("Error fetching teams (DETAILS):", teamsError.details);
+            console.error("Error fetching teams (HINT):", teamsError.hint);
+        }
         const { data: membersData, error: membersError } = await supabase.from('member').select('*');
         if (membersError) console.error("Error fetching members:", membersError);
 
