@@ -155,6 +155,7 @@ export default function JudgeLoginPage() {
                                     value={judgeName}
                                     onChange={(e) => setJudgeName(e.target.value)}
                                     className="w-full bg-black/20 border border-gold-dark/20 text-gold-light rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-gold-medium/50 focus:border-transparent transition-all placeholder:text-gold-dark/40 font-semibold text-lg"
+                                    suppressHydrationWarning
                                 />
                             </div>
                         </motion.div>
@@ -174,6 +175,7 @@ export default function JudgeLoginPage() {
                                     type="button"
                                     onClick={() => setShowPin(!showPin)}
                                     className="text-gold-medium hover:text-gold-light transition-colors p-1"
+                                    suppressHydrationWarning
                                 >
                                     {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
@@ -189,6 +191,7 @@ export default function JudgeLoginPage() {
                                         onChange={(e) => handlePinChange(i, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(i, e)}
                                         className="w-full aspect-square bg-white/5 text-gold-light text-center text-3xl font-bold rounded-2xl border border-gold-dark/30 outline-none focus:bg-white/10 focus:ring-2 focus:ring-gold-light/50 transition-all shadow-inner focus:scale-105"
+                                        suppressHydrationWarning
                                     />
                                 ))}
                             </div>
