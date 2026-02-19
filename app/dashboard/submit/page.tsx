@@ -24,7 +24,7 @@ export default function SubmitProjectPage() {
 
     // General Information
     const [projectName, setProjectName] = useState("");
-    const [submissionTitle, setSubmissionTitle] = useState("");
+    const [tagline, setTagline] = useState("");
 
     const [description, setDescription] = useState("");
     const [techStack, setTechStack] = useState("");
