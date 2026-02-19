@@ -278,7 +278,7 @@ export default function JudgeHomePage() {
                                                             </div>
 
                                                             {cp.released_at && (
-                                                                <p className="text-[11px] text-[#C09B6E] mb-2">Released: {new Date(cp.released_at).toLocaleString()}</p>
+                                                                <p className="text-[11px] text-[#C09B6E] mb-2" suppressHydrationWarning>Released: {new Date(cp.released_at).toLocaleString()}</p>
                                                             )}
 
                                                             {tasks.length === 0 ? (

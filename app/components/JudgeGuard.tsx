@@ -11,7 +11,7 @@ export default function JudgeGuard({ children }: { children: React.ReactNode }) 
 
     useEffect(() => {
         if (!isLoading && role !== "judge") {
-            router.replace("/");
+            router.replace("/judge-login");
         }
     }, [isLoading, role, router]);
 
