@@ -41,6 +41,10 @@
   --color-gold-dark: var(--color-gold-dark);
 }
 
+html {
+  font-size: 17px;
+}
+
 body {
   background-color: var(--color-burgundy);
   color: var(--color-gold-light);
