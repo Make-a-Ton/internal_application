@@ -19,10 +19,8 @@ export default function CountdownTimer({ teamName }: CountdownTimerProps) {
 
     useEffect(() => {
         setMounted(true);
-        // Let's set a 24-hour countdown from the moment it mounts, or you can 
-        // put a specific Date object for the hackathon deadline.
-        const targetDate = new Date();
-        targetDate.setHours(targetDate.getHours() + 24);
+        // Official countdown target: Feb 22, 2026 at 11:00 AM (submission deadline)
+        const targetDate = new Date(2026, 1, 22, 11, 0, 0, 0); // month is 0-indexed
 
         const timer = setInterval(() => {
             const now = new Date();
@@ -33,7 +31,7 @@ export default function CountdownTimer({ teamName }: CountdownTimerProps) {
                 setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
             } else {
                 setTimeLeft({
-                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    hours: Math.floor(difference / (1000 * 60 * 60)),
                     minutes: Math.floor((difference / 1000 / 60) % 60),
                     seconds: Math.floor((difference / 1000) % 60)
                 });
@@ -83,7 +81,7 @@ export default function CountdownTimer({ teamName }: CountdownTimerProps) {
             </div>
 
             <p className="text-xs text-[#E7BB88]/60 mt-4 font-medium italic">
-                {teamName !== "..." ? `Keep building, Team ${teamName}!` : "Keep building!"}
+                {teamName !== "..." ? `Keep building, ${teamName}!` : "Keep building!"}
             </p>
         </div>
     );
