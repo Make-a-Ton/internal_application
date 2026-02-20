@@ -1,0 +1,65 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18' # Adjust to your current node version if different
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build Next.js application
+      run: npm run build
+      env:
+        # Note: You might need to supply build-time secrets here
+        # NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        # NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+  # Deployment job: Deploys via SSH to a server running Docker Compose
+  # 
+  # To use this:
+  # 1. Go to your GitHub repository -> Settings -> Secrets and variables -> Actions
+  # 2. Add New repository secrets:
+  #    - SERVER_HOST: The IP address or domain of your deployment server
+  #    - SERVER_USER: The SSH username (e.g., ubuntu, root)
+  #    - SERVER_SSH_KEY: Your private SSH key
+  deploy:
+    needs: build
+    # Only run deploy if pushing to the main branch
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to production server
+        # You can use standard SSH actions to connect to your EC2 / VPS / Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Navigate to the folder where your project is cloned on the server
+            # e.g., cd /var/www/internal_application
+            cd /path/to/your/project/on/server
+            
+            # Pull the latest code
+            git pull origin main
+            
+            # Rebuild and restart the Docker containers
+            docker compose down
+            docker compose up --build -d
