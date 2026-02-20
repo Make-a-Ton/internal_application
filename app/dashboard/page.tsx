@@ -86,8 +86,9 @@ export default function DashboardPage() {
         };
     }, [authTeam]);
 
-    // Get the 2 most recent requests (already sorted DESC by created_at from AppContext)
-    const recentRequests = requests.slice(0, 2);
+    // Filter requests for the current team and get the 2 most recent
+    const teamRequests = requests.filter(r => r.teamId === authTeam?.id);
+    const recentRequests = teamRequests.slice(0, 2);
 
     // Derive project status from problem_stat
     const projectStatus: "submitted" | "pending" = teamData?.problem_stat ? "submitted" : "pending";
