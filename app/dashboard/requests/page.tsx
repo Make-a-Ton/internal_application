@@ -14,6 +14,9 @@ export default function RequestsPage() {
     const { requests, addRequest, mentors } = useAppState();
     const { team } = useAuth();
 
+    // Filter requests for the current team
+    const teamRequests = requests.filter(r => r.teamId === team?.id);
+
     const handleNewRequest = (request: { category: string; urgency: string; description: string; mentorId?: string }) => {
         const teamId = team?.id;
         if (!teamId) return;
@@ -82,15 +85,14 @@ export default function RequestsPage() {
                 </motion.button>
             </div>
 
-            {/* Requests List */}
             <div className="px-4 py-6 space-y-4">
-                {requests.length === 0 ? (
+                {teamRequests.length === 0 ? (
                     <div className="text-center py-12">
                         <p className="text-[#3A0015]/60 text-sm">No requests yet</p>
                         <p className="text-[#3A0015]/40 text-xs mt-1">Tap &quot;New Request&quot; to get help</p>
                     </div>
                 ) : (
-                    requests.map((request, index) => (
+                    teamRequests.map((request, index) => (
                         <motion.div
                             key={request.id}
                             initial={{ opacity: 0, y: 20 }}
