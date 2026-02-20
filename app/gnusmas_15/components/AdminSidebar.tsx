@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Flag, MessageSquare, Bell, LogOut, Gavel, Trophy, X, GraduationCap, FileText } from "lucide-react";
+import { LayoutDashboard, Users, Flag, MessageSquare, Bell, LogOut, Gavel, Trophy, X, GraduationCap, FileText, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const sidebarItems = [
@@ -15,6 +15,7 @@ const sidebarItems = [
     { icon: Gavel, href: "/gnusmas_15/judges", label: "Judges" },
     { icon: Trophy, href: "/gnusmas_15/leaderboard", label: "Leaderboard" },
     { icon: GraduationCap, href: "/gnusmas_15/mentors", label: "Mentors" },
+    { icon: Calendar, href: "/gnusmas_15/schedule", label: "Schedule" },
 ];
 
 interface AdminSidebarProps {
